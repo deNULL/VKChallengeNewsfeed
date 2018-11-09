@@ -61,13 +61,36 @@ class NewsfeedCell: UITableViewCell {
     }
   }
   
-  func getDateTime(dt: Int) {
+  func getDateTime(dt: Int) -> String {
+    let timeFormatter = DateFormatter()
+    timeFormatter.dateFormat = "H:mm"
     
+    let calendar = Calendar.current
+    let date = Date(timeIntervalSince1970: TimeInterval(dt))
+    let now = Date()
+    let day = calendar.component(Calendar.Component.day, from: date)
+    let month = calendar.component(Calendar.Component.month, from: date)
+    let months = ["янв", "фев", "мар", "апр", "май", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"]
+    let year = calendar.component(Calendar.Component.year, from: date)
+    if calendar.isDateInToday(date) {
+      return "сегодня в " + timeFormatter.string(from: date)
+    } else
+    if calendar.isDateInYesterday(date) {
+      return "вчера в " + timeFormatter.string(from: date)
+    } else
+    if calendar.isDateInTomorrow(date) {
+      return "завтра в " + timeFormatter.string(from: date)
+    } else
+    if year == calendar.component(Calendar.Component.year, from: now) {
+      return String(day) + " " + months[month - 1] + " в " + timeFormatter.string(from: date)
+    } else {
+      return String(day) + " " + months[month - 1] + " " + String(year)
+    }
   }
   
   func setupCell(post: Post, state: NewsfeedCellState) {
     sourceNameLabel.text = post.source.name
-    postDateLabel.text = ""
+    postDateLabel.text = getDateTime(dt: post.date)
     postTextLabel.text = post.text
     
     likesCountLabel.text = getShortNumber(n: post.likes)
