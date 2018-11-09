@@ -12,10 +12,7 @@ class DownloadableImageView: RoundedImageView {
   var downloadTask: URLSessionDataTask? = nil
   
   func downloadImageFrom(link: String, contentMode: UIView.ContentMode) {
-    if downloadTask != nil {
-      downloadTask!.cancel()
-    }
-    
+    cancelDownload()
     downloadTask = URLSession.shared.dataTask(with: URL(string: link)!) { (data, response, error) in
       DispatchQueue.main.async {
         self.contentMode =  contentMode
@@ -23,5 +20,12 @@ class DownloadableImageView: RoundedImageView {
       }
     }
     downloadTask!.resume()
+  }
+  
+  func cancelDownload() {
+    if downloadTask != nil {
+      downloadTask!.cancel()
+    }
+    downloadTask = nil
   }
 }
