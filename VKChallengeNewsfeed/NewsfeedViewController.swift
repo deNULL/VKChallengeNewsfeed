@@ -15,7 +15,8 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   var cells: [NewsfeedCellState] = []
   @IBOutlet weak var itemsCountLabel: UILabel!
   @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
-  @IBOutlet weak var userpicImageView: RoundedImageView!
+  @IBOutlet weak var userpicImageView: DownloadableImageView!
+  @IBOutlet weak var footerImageView: UIImageView!
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -107,6 +108,8 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
         self.getPlural(m: self.feed.items.count, cs: ["запись", "записи", "записей"]);
       self.itemsCountLabel.isHidden = false
       self.loadingIndicator.isHidden = true
+      
+      self.footerImageView.isHidden = self.feed.items.count == 0
       
       self.tableView.reloadData()
     }

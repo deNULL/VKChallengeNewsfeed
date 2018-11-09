@@ -16,13 +16,13 @@ struct NewsfeedCellState {
 class NewsfeedCell: UITableViewCell {
   @IBOutlet weak var postTextLabel: UILabel!
   @IBOutlet weak var backgroundImageView: UIImageView!
-  @IBOutlet weak var sourceImageView: UIImageView!
+  @IBOutlet weak var sourceImageView: DownloadableImageView!
   @IBOutlet weak var sourceNameLabel: UILabel!
   @IBOutlet weak var likesCountLabel: UILabel!
   @IBOutlet weak var commentsCountLabel: UILabel!
   @IBOutlet weak var repostsCountLabel: UILabel!
   @IBOutlet weak var viewsCountLabel: UILabel!
-  @IBOutlet weak var singleImageView: UIImageView!
+  @IBOutlet weak var singleImageView: DownloadableImageView!
   @IBOutlet weak var galleryScrollView: UIScrollView!
   @IBOutlet weak var postDateLabel: UILabel!
   
@@ -32,7 +32,11 @@ class NewsfeedCell: UITableViewCell {
       super.awakeFromNib()
       // Initialization code
     if let card = UIImage(named: "CardWithShadow") {
-      backgroundImageView.image = card.resizableImage(withCapInsets: UIEdgeInsets(top: 14, left: 32, bottom: 31, right: 31))
+      backgroundImageView.image = card.resizableImage(withCapInsets: UIEdgeInsets(
+        top: 14,
+        left: 32,
+        bottom: 31,
+        right: 31))
     }
     
     

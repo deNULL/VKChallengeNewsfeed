@@ -13,7 +13,7 @@
         <scene sceneID="E59-qb-mak">
             <objects>
                 <tableViewController id="ugz-kn-ohb" customClass="NewsfeedViewController" customModule="VKChallengeNewsfeed" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="Dfp-SL-88K">
+                    <tableView key="view" opaque="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="Dfp-SL-88K">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -21,7 +21,7 @@
                             <rect key="frame" x="0.0" y="0.0" width="375" height="80"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxY="YES"/>
                             <subviews>
-                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HGf-61-S48" customClass="RoundedImageView" customModule="VKChallengeNewsfeed" customModuleProvider="target">
+                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HGf-61-S48" customClass="DownloadableImageView" customModule="VKChallengeNewsfeed" customModuleProvider="target">
                                     <rect key="frame" x="331" y="36" width="36" height="36"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     <userDefinedRuntimeAttributes>
@@ -60,23 +60,32 @@
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </view>
                         <view key="tableFooterView" contentMode="scaleToFill" id="XSV-74-OC5">
-                            <rect key="frame" x="0.0" y="586" width="375" height="64"/>
+                            <rect key="frame" x="0.0" y="586" width="375" height="52"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxY="YES"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="0 записей" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d1o-8J-nlg">
-                                    <rect key="frame" x="8" y="22" width="359" height="21"/>
+                                <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Footer" translatesAutoresizingMaskIntoConstraints="NO" id="WnZ-0u-QSE">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="52"/>
+                                </imageView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0 записей" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d1o-8J-nlg">
+                                    <rect key="frame" x="8" y="11" width="359" height="18"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                     <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="p3E-M4-rsX">
-                                    <rect key="frame" x="177" y="23" width="20" height="20"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="p3E-M4-rsX">
+                                    <rect key="frame" x="177.5" y="10" width="20" height="20"/>
                                 </activityIndicatorView>
                             </subviews>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
+                                <constraint firstItem="p3E-M4-rsX" firstAttribute="centerY" secondItem="XSV-74-OC5" secondAttribute="centerY" constant="-6" id="Wno-GI-b1e"/>
                                 <constraint firstItem="d1o-8J-nlg" firstAttribute="leading" secondItem="XSV-74-OC5" secondAttribute="leading" constant="8" id="ZWm-oE-QMJ"/>
+                                <constraint firstItem="d1o-8J-nlg" firstAttribute="centerY" secondItem="XSV-74-OC5" secondAttribute="centerY" constant="-6" id="cLJ-8R-skU"/>
+                                <constraint firstItem="p3E-M4-rsX" firstAttribute="centerX" secondItem="XSV-74-OC5" secondAttribute="centerX" id="fEs-xd-pG3"/>
+                                <constraint firstItem="WnZ-0u-QSE" firstAttribute="top" secondItem="XSV-74-OC5" secondAttribute="top" id="juM-4P-GS8"/>
+                                <constraint firstAttribute="trailing" secondItem="WnZ-0u-QSE" secondAttribute="trailing" id="r9m-E2-fiG"/>
+                                <constraint firstAttribute="bottom" secondItem="WnZ-0u-QSE" secondAttribute="bottom" id="spR-Mu-DcJ"/>
+                                <constraint firstItem="WnZ-0u-QSE" firstAttribute="leading" secondItem="XSV-74-OC5" secondAttribute="leading" id="y7Z-JO-R4b"/>
                                 <constraint firstAttribute="trailing" secondItem="d1o-8J-nlg" secondAttribute="trailing" constant="8" id="ySf-zB-tsf"/>
                             </constraints>
                         </view>
@@ -84,7 +93,7 @@
                             <tableViewCell opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="Post" rowHeight="478" id="yb5-Rf-F06" customClass="NewsfeedCell" customModule="VKChallengeNewsfeed" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="108" width="375" height="478"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="top" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="yb5-Rf-F06" id="KWT-iW-ZUh">
+                                <tableViewCellContentView key="contentView" opaque="NO" multipleTouchEnabled="YES" contentMode="top" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="yb5-Rf-F06" id="KWT-iW-ZUh">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="478"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
@@ -115,7 +124,7 @@
                                             </attributedString>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="XsJ-p4-7DB">
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="XsJ-p4-7DB" customClass="DownloadableImageView" customModule="VKChallengeNewsfeed" customModuleProvider="target">
                                             <rect key="frame" x="8" y="81.5" width="359" height="336.5"/>
                                         </imageView>
                                         <scrollView hidden="YES" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Fz8-XA-JNh">
@@ -193,7 +202,7 @@
                                                 <constraint firstAttribute="height" constant="24" id="L8W-BI-ML6"/>
                                             </constraints>
                                         </imageView>
-                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ZKB-29-uYA" customClass="RoundedImageView" customModule="VKChallengeNewsfeed" customModuleProvider="target">
+                                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ZKB-29-uYA" customClass="DownloadableImageView" customModule="VKChallengeNewsfeed" customModuleProvider="target">
                                             <rect key="frame" x="20" y="12" width="36" height="36"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="36" id="bsk-Ca-SnW"/>
@@ -313,6 +322,7 @@
                         </connections>
                     </refreshControl>
                     <connections>
+                        <outlet property="footerImageView" destination="WnZ-0u-QSE" id="qZ2-ln-6RR"/>
                         <outlet property="itemsCountLabel" destination="d1o-8J-nlg" id="rgZ-9H-r7C"/>
                         <outlet property="loadingIndicator" destination="p3E-M4-rsX" id="pPa-4P-X2P"/>
                         <outlet property="userpicImageView" destination="HGf-61-S48" id="EaD-NT-735"/>
@@ -325,6 +335,7 @@
     </scenes>
     <resources>
         <image name="Comment_outline_24" width="24" height="24"/>
+        <image name="Footer" width="1" height="52"/>
         <image name="Like_outline_24" width="24" height="24"/>
         <image name="Search_16" width="16" height="16"/>
         <image name="Share_outline_24" width="24" height="24"/>
