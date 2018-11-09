@@ -21,6 +21,11 @@
 		1B293FB62195080A00F7AA28 /* PostList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B293FB52195080A00F7AA28 /* PostList.swift */; };
 		1B293FB82195081200F7AA28 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B293FB72195081200F7AA28 /* Post.swift */; };
 		1B293FBC2195085700F7AA28 /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B293FBB2195085700F7AA28 /* Photo.swift */; };
+		1B293FBE21953D1D00F7AA28 /* RoundedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B293FBD21953D1D00F7AA28 /* RoundedView.swift */; };
+		1B293FC021953D3E00F7AA28 /* RoundedImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B293FBF21953D3E00F7AA28 /* RoundedImageView.swift */; };
+		1B293FC321953E8000F7AA28 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B293FC221953E8000F7AA28 /* GradientView.swift */; };
+		1B293FC52195499600F7AA28 /* PostTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B293FC42195499600F7AA28 /* PostTableViewCell.swift */; };
+		1B293FC72195667700F7AA28 /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B293FC62195667700F7AA28 /* ImageUtils.swift */; };
 		52CC0638AE915FDBF97F6138 /* Pods_VKChallengeNewsfeed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4134F2182D300A05EE0D7A07 /* Pods_VKChallengeNewsfeed.framework */; };
 /* End PBXBuildFile section */
 
@@ -42,6 +47,11 @@
 		1B293FB52195080A00F7AA28 /* PostList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostList.swift; sourceTree = "<group>"; };
 		1B293FB72195081200F7AA28 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
 		1B293FBB2195085700F7AA28 /* Photo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
+		1B293FBD21953D1D00F7AA28 /* RoundedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedView.swift; sourceTree = "<group>"; };
+		1B293FBF21953D3E00F7AA28 /* RoundedImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedImageView.swift; sourceTree = "<group>"; };
+		1B293FC221953E8000F7AA28 /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
+		1B293FC42195499600F7AA28 /* PostTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTableViewCell.swift; sourceTree = "<group>"; };
+		1B293FC62195667700F7AA28 /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
 		4134F2182D300A05EE0D7A07 /* Pods_VKChallengeNewsfeed.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VKChallengeNewsfeed.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C684A8B524AE41E20ACBA8EC /* Pods-VKChallengeNewsfeed.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VKChallengeNewsfeed.release.xcconfig"; path = "Pods/Target Support Files/Pods-VKChallengeNewsfeed/Pods-VKChallengeNewsfeed.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -81,11 +91,13 @@
 			children = (
 				1B1F4F042194E944007E3D94 /* AppDelegate.swift */,
 				1B1F4F082194E944007E3D94 /* Main.storyboard */,
+				1B293FC42195499600F7AA28 /* PostTableViewCell.swift */,
 				1B293FA62194F44A00F7AA28 /* NewsfeedViewController.swift */,
 				1B1F4F0B2194E946007E3D94 /* Assets.xcassets */,
 				1B1F4F0D2194E946007E3D94 /* LaunchScreen.storyboard */,
 				1B1F4F102194E946007E3D94 /* Info.plist */,
 				1B293FAA2195066500F7AA28 /* Models */,
+				1B293FC121953D6200F7AA28 /* Views */,
 			);
 			path = VKChallengeNewsfeed;
 			sourceTree = "<group>";
@@ -104,6 +116,17 @@
 				1B293FBB2195085700F7AA28 /* Photo.swift */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		1B293FC121953D6200F7AA28 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				1B293FBD21953D1D00F7AA28 /* RoundedView.swift */,
+				1B293FBF21953D3E00F7AA28 /* RoundedImageView.swift */,
+				1B293FC221953E8000F7AA28 /* GradientView.swift */,
+				1B293FC62195667700F7AA28 /* ImageUtils.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		A5615C6214903BA57755A0D6 /* Pods */ = {
@@ -237,15 +260,20 @@
 			files = (
 				1B293FBC2195085700F7AA28 /* Photo.swift in Sources */,
 				1B1F4F052194E944007E3D94 /* AppDelegate.swift in Sources */,
+				1B293FC52195499600F7AA28 /* PostTableViewCell.swift in Sources */,
 				1B293FB62195080A00F7AA28 /* PostList.swift in Sources */,
 				1B293FB2219507C300F7AA28 /* ProfileCollection.swift in Sources */,
 				1B293FAC2195079800F7AA28 /* Profile.swift in Sources */,
 				1B293FA92194F54300F7AA28 /* API.swift in Sources */,
 				1B293FB4219507E300F7AA28 /* ItemList.swift in Sources */,
 				1B293FB0219507B200F7AA28 /* Group.swift in Sources */,
+				1B293FBE21953D1D00F7AA28 /* RoundedView.swift in Sources */,
+				1B293FC321953E8000F7AA28 /* GradientView.swift in Sources */,
 				1B293FAE219507A300F7AA28 /* User.swift in Sources */,
+				1B293FC021953D3E00F7AA28 /* RoundedImageView.swift in Sources */,
 				1B293FA72194F44A00F7AA28 /* NewsfeedViewController.swift in Sources */,
 				1B293FB82195081200F7AA28 /* Post.swift in Sources */,
+				1B293FC72195667700F7AA28 /* ImageUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

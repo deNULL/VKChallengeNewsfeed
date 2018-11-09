@@ -27,7 +27,11 @@ public class Post {
     likes = (json["likes"] as! [String: Any])["count"] as! Int
     comments = (json["comments"] as! [String: Any])["count"] as! Int
     reposts = (json["reposts"] as! [String: Any])["count"] as! Int
-    views = (json["views"] as! [String: Any])["count"] as! Int
+    if let views = json["views"] as? [String: Any] {
+      self.views = views["count"] as! Int
+    } else {
+      self.views = 0
+    }
     date = json["date"] as! Int
     var list: [Any] = []
     if let attachs = json["attachments"] as? [Any] {

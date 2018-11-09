@@ -31,6 +31,7 @@ public class ItemList<ItemType> {
   
   // Reload in-place
   func reload(count: Int, onCompletion: @escaping (_ error: Error?) -> ()) {
+    self.nextFrom = nil
     loadItems(count: count) { (newList, error) in
       if let list = newList {
         self.items = list.items

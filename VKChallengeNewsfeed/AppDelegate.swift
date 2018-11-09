@@ -14,7 +14,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   var window: UIWindow?
 
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-    //
+    let window = self.window!
+    let backgroundView = GradientView(frame:
+        CGRect(x: 0, y: 0,
+               width: max(window.frame.width, window.frame.height),
+               height: max(window.frame.width, window.frame.height)))
+    window.addSubview(backgroundView)
     return true
   }
 
