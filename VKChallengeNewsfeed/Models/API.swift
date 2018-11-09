@@ -13,7 +13,7 @@ class API {
   
   static func call(method: String,
                    params: [String: String],
-                   onCompletion: @escaping (_ success: Bool, _ error: Error?, _ result: Any?)->()) {
+                   onCompletion: @escaping (_ response: Any?, _ error: Error?)->()) {
     var request = URLRequest(url: URL(string: "https://api.vk.com/method/" + method)!)
     request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
     request.httpMethod = "POST"
@@ -28,10 +28,10 @@ class API {
     let task = URLSession.shared.dataTask(with: request) { data, response, error in
       
       if let error = error {
-        onCompletion(false, error, nil)
+        onCompletion(nil, error)
       } else {
         guard let data = data else {
-          onCompletion(false, error, nil)
+          onCompletion(nil, error)
           return
         }
         
@@ -40,72 +40,83 @@ class API {
             returnRes = try JSONSerialization.jsonObject(with: data, options: []) as! [String: Any]
             
             if let response = returnRes["response"] {
-              onCompletion(true, nil, response)
+              onCompletion(response, nil)
             } else {
-              onCompletion(false, NSError(domain: "com.vk.APIError", code: 0, userInfo: returnRes), nil)
+              onCompletion(nil, NSError(domain: "com.vk.APIError", code: 0, userInfo: returnRes))
             }
           } catch let error as NSError {
-            onCompletion(false, error, nil)
+            onCompletion(nil, error)
           }
         } else {
-          onCompletion(false, error, nil)
+          onCompletion(nil, error)
         }
       }
     }
     task.resume()
   }
   
-  static func execute(code: String, onCompletion: @escaping (_ success: Bool, _ error: Error?, _ result: Any?)->()) {
+  static func execute(code: String, onCompletion: @escaping (_ result: Any?, _ error: Error?)->()) {
     API.call(method: "execute", params: ["code": code], onCompletion: onCompletion)
   }
   
-  static func getNewsfeed(startFrom: String?, count: Int, onCompletion: @escaping (_ success: Bool, _ error: Error?, _ list: PostList?)->()) {
-    var params: [String: String] = ["count": String(count)]
+  static func getNewsfeed(startFrom: String?, count: Int, onCompletion: @escaping (_ list: PostList?, _ error: Error?)->()) {
+    var params: [String: String] = [
+      "filters": "post",
+      "fields": "photo_50,photo_100",
+      "count": String(count)
+    ]
     if startFrom != nil {
       params["start_from"] = startFrom!
     }
-    API.call(method: "newsfeed.get", params: params, onCompletion: onCompletion as! (Bool, Error?, Any?) -> ())
+    API.call(method: "newsfeed.get", params: params) { (response, error) in
+      if let list = response {
+        onCompletion(NewsfeedPostList(json: list as! [String: Any]), nil)
+      } else {
+        onCompletion(nil, error)
+      }
+    }
   }
   
   static func searchNewsfeed(query: String, startFrom: String?, count: Int,
-                             onCompletion: @escaping (_ success: Bool, _ error: Error?, _ list: PostList?)->()) {
-    var params: [String: String] = ["q": query, "count": String(count)] 
+                             onCompletion: @escaping (_ list: PostList?, _ error: Error?)->()) {
+    var params: [String: String] = [
+      "q": query,
+      "fields": "photo_50,photo_100",
+      "count": String(count)
+    ]
     if startFrom != nil {
       params["start_from"] = startFrom!
     }
-    API.call(method: "newsfeed.search", params: params) { (success, error, response) in
-      if success {
-        let list = PostList(json: response as! [String: Any], loader: { (nextFrom, count, onCompletion) in
-          API.searchNewsfeed(query: query, startFrom: nextFrom, count: count, onCompletion: onCompletion)
-        })
-        onCompletion(success, nil, list)
+    API.call(method: "newsfeed.search", params: params) { (response, error) in
+      if let list = response {
+        onCompletion(NewsfeedSearchPostList(query: query, json: list as! [String: Any]), nil)
       } else {
-        onCompletion(success, error, nil)
+        onCompletion(nil, error)
       }
     }
   }
   
-  static func getSelf(fields: [String], onCompletion: @escaping (_ success: Bool, _ error: Error?, _ user: User?)->()) {
-    let params: [String: String] = ["fields": fields.joined(separator: ",")]
-    API.call(method: "users.get", params: params) { (success, error, response) in
-      if success {
-        let user = User(json: response as! [String: Any])
-        onCompletion(success, nil, user)
+  static func getSelf(fields: [String], onCompletion: @escaping (_ user: User?, _ error: Error?)->()) {
+    let params: [String: String] = [
+      "fields": fields.joined(separator: ",")
+    ]
+    API.call(method: "users.get", params: params) { (response, error) in
+      if let user = response {
+        onCompletion(User(json: user as! [String: Any]), nil)
       } else {
-        onCompletion(success, error, nil)
+        onCompletion(nil, error)
       }
     }
   }
   
-  static func getSelfAndNewsfeed(onCompletion: @escaping (_ success: Bool, _ error: Error?, _ user: User?, _ list: PostList?)->()) {
-    API.execute(code: "return [API.users.get(), API.newsfeed.get()];") { (success, error, response) in
-      if success {
-        let pair = response as! [Any]
-        let user = User(json: pair[0] as! [String: Any])
-        let list = PostList(json: pair[1] as! [String: Any], loader: API.getNewsfeed)
-        onCompletion(success, nil, user, list)
+  static func getSelfAndNewsfeed(onCompletion: @escaping (_ user: User?, _ list: PostList?,_ error: Error?)->()) {
+    API.execute(code: "return [API.users.get({ fields: \"photo_50,photo_100\" }), API.newsfeed.get({ filters: \"post\", fields: \"photo_50,photo_100\" })];") { (response, error) in
+      if let pair = response as? [Any] {
+        let user = User(json: (pair[0] as! [Any])[0] as! [String: Any])
+        let list = NewsfeedPostList(json: pair[1] as! [String: Any])
+        onCompletion(user, list, nil)
       } else {
-        onCompletion(success, error, nil, nil)
+        onCompletion(nil, nil, error)
       }
     }
   }

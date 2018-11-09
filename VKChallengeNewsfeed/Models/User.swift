@@ -26,7 +26,7 @@ public class User: Profile {
   
   init(json: [String: Any]) {
     id = json["id"] as! Int
-    photo = json["photo_50"] as! String
+    photo = json["photo_100"] as! String
     firstName = json["first_name"] as! String
     lastName = json["last_name"] as! String
   }

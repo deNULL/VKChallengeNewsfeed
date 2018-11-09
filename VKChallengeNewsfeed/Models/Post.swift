@@ -10,21 +10,34 @@ import Foundation
 
 public class Post {
   let id: Int
-  let owner: Profile
+  let source: Profile
+  let text: String
+  let likes: Int
+  let comments: Int
+  let reposts: Int
+  let views: Int
+  let date: Int
   let attachments: [Any]
   
   init(json: [String: Any], profiles: ProfileCollection) {
-    id = json["id"] as! Int
-    let ownerId = json["owner_id"] as! Int
-    owner = profiles[ownerId]!
-    let attachs = json["attachs"] as! [Any]
+    id = json["post_id"] as! Int
+    let sourceId = json["source_id"] as! Int
+    source = profiles[sourceId]!
+    text = json["text"] as! String
+    likes = (json["likes"] as! [String: Any])["count"] as! Int
+    comments = (json["comments"] as! [String: Any])["count"] as! Int
+    reposts = (json["reposts"] as! [String: Any])["count"] as! Int
+    views = (json["views"] as! [String: Any])["count"] as! Int
+    date = json["date"] as! Int
     var list: [Any] = []
-    for item in attachs { // Filtering out unsupported attachments
-      let attach = item as! [String: Any]
-      let type = attach["type"] as! String
-      if type == "photo" {
-        let photo = Photo(json: attach[type] as! [String: Any], profiles: profiles)
-        list.append(photo)
+    if let attachs = json["attachments"] as? [Any] {
+      for item in attachs { // Filtering out unsupported attachments
+        let attach = item as! [String: Any]
+        let type = attach["type"] as! String
+        if type == "photo" {
+          let photo = Photo(json: attach[type] as! [String: Any], profiles: profiles)
+          list.append(photo)
+        }
       }
     }
     attachments = list

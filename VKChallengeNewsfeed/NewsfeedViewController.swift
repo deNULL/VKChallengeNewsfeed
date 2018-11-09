@@ -12,7 +12,7 @@ import VK_ios_sdk
 
 class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDelegate {
   var me: User? = nil
-  var feed: PostList = PostList(loadNext: nil)
+  var feed: PostList = PostList()
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -20,8 +20,6 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
     let sdkInstance = VKSdk.initialize(withAppId: "6746103")
     sdkInstance?.register(self)
     sdkInstance?.uiDelegate = self
-    
-    
 
     VKSdk.wakeUpSession(["friends", "wall"]) { (state, error) in
       if (state == VKAuthorizationState.authorized) {
@@ -74,56 +72,24 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   }
   
   func initNewsfeed() {
-    API.execute(code: "return [API.users.get(), API.newsfeed.get()];") { (success, error, response) in
-      // TODO: add error handling
-      if let r = response as? [Any] {
-        self.me = r[0]
-        self.updateFeed(response: r[1] as! [String: Any], replace: true)
+    API.getSelfAndNewsfeed { (user, list, error) in
+      if user != nil && list != nil {
+        self.me = user!
+        self.feed = list!
+        print(self.feed.items)
+        // TODO: redraw
+      } else {
+        // TODO: add error handling
       }
     }
   }
   
   func loadMore() {
-    if nextFrom == nil {
-      return
-    }
-    
-    if isSearching() {
-      API.searchNewsfeed(query: "", startFrom: nextFrom) { (success, error, response) in
-        // TODO: add error handling
-        self.updateFeed(response: response as! [String: Any], replace: false)
+    self.feed.loadNext(count: 30) { (error) in
+      if let err = error {
+        // TODO: error handling
       }
-    } else {
-      API.getNewsfeed(startFrom: nextFrom) { (success, error, response) in
-        // TODO: add error handling
-        self.updateFeed(response: response as! [String: Any], replace: false)
-      }
-    }
-  }
-  
-  func updateFeed(response: [String: Any], replace: Bool) {
-    if replace {
-      feed = response["items"] as! [Any]
-      profiles = [:] // Reset storage to prevent eating up memory
-    } else {
-      feed.append(contentsOf: response["items"] as! [Any])
-    }
-    nextFrom = response["next_from"] as? String
-    
-    // Store new users/groups
-    if let users = response["profiles"] as? [Any] {
-      for item in users {
-        let user = item as! [String: Any]
-        let id = user["id"] as! Int
-        profiles[id] = user
-      }
-    }
-    if let groups = response["groups"] as? [Any] {
-      for item in groups {
-        let group = item as! [String: Any]
-        let id = group["id"] as! Int
-        profiles[-id] = group
-      }
+      // TODO: redraw
     }
   }
 
@@ -133,7 +99,7 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   }
 
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return feed.count
+    return feed.items.count
   }
 
   /*
