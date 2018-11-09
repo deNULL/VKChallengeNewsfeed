@@ -9,6 +9,11 @@
 import UIKit
 
 extension UIImageView {
+  override open func awakeFromNib() {
+    super.awakeFromNib()
+    tintColorDidChange()
+  }
+  
   func downloadImageFrom(link: String, contentMode: UIView.ContentMode) {
     URLSession.shared.dataTask(with: URL(string: link)!) { (data, response, error) in
       DispatchQueue.main.async {

@@ -16,14 +16,14 @@ public struct PhotoSize {
 
 public class Photo {
   let id: Int
-  let owner: Profile
+  let owner: Profile?
   let minimumSize: PhotoSize
   let maximumSize: PhotoSize
   
   init(json: [String: Any], profiles: ProfileCollection) {
     id = json["id"] as! Int
     let ownerId = json["owner_id"] as! Int
-    owner = profiles[ownerId]!
+    owner = profiles[ownerId]
     
     let screenWidth = UIScreen.main.bounds.width * UIScreen.main.scale
     let sizes = json["sizes"] as! [Any]

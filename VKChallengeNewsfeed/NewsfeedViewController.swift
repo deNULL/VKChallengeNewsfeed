@@ -9,11 +9,6 @@
 import UIKit
 import VK_ios_sdk
 
-struct NewsfeedCellState {
-  var isExpanded: Bool
-  var selectedPhoto: Int
-}
-
 class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDelegate {
   var me: User? = nil
   var feed: PostList = PostList()
@@ -129,26 +124,7 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
     }
   }
   
-  func getShortNumber(n: Int) -> String {
-    if n > 10000000 || (n > 1000000 && (n / 100000) % 10 == 0) {
-      return String(n / 1000000) + "M";
-    } else
-    if n > 1000000 {
-      return String(Float(n / 100000) / 10) + "M";
-    } else
-    if n > 10000 || (n > 1000 && (n / 100) % 10 == 0) {
-      return String(n / 1000) + "K";
-    } else
-    if n > 1000 {
-      return String(Float(n / 100) / 10) + "K";
-    } else {
-      return String(n);
-    }
-  }
   
-  func getDateTime(dt: Int) {
-    
-  }
   
   func loadMore() {
     self.feed.loadNext(count: 30) { (error) in
@@ -171,32 +147,8 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
 
   
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let item = feed.items[indexPath.row]
-    let state = cells[indexPath.row]
-    
-    let cell = tableView.dequeueReusableCell(withIdentifier: "Post", for: indexPath) as! PostTableViewCell
-    cell.sourceNameLabel.text = item.source.name
-    cell.postDateLabel.text = ""
-    cell.postTextLabel.text = item.text
-    
-    cell.likesCountLabel.text = getShortNumber(n: item.likes)
-    cell.commentsCountLabel.text = getShortNumber(n: item.comments)
-    cell.repostsCountLabel.text = getShortNumber(n: item.reposts)
-    cell.viewsCountLabel.text = getShortNumber(n: item.views)
-    
-    cell.sourceImageView.downloadImageFrom(link: item.source.photo, contentMode: UIView.ContentMode.scaleAspectFit)
-    if item.attachments.count == 1 {
-      let photo = (item.attachments[0] as! Photo)
-      cell.singleImageView.image = nil
-      cell.singleImageView.downloadImageFrom(link: photo.minimumSize.url,
-                                             contentMode: UIView.ContentMode.scaleToFill)
-    } else
-    if item.attachments.count > 1 {
-      cell.singleImageView.image = nil
-    } else {
-      cell.singleImageView.image = nil
-    }
-
+    let cell = tableView.dequeueReusableCell(withIdentifier: "Post", for: indexPath) as! NewsfeedCell
+    cell.setupCell(post: feed.items[indexPath.row], state: cells[indexPath.row])
     return cell
   }
   
