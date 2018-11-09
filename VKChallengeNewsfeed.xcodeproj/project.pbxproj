@@ -27,6 +27,7 @@
 		1B293FC52195499600F7AA28 /* NewsfeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B293FC42195499600F7AA28 /* NewsfeedCell.swift */; };
 		1B293FC72195667700F7AA28 /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B293FC62195667700F7AA28 /* ImageUtils.swift */; };
 		1BD7ABB82196129F00E2B3E0 /* DownloadableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BD7ABB72196129F00E2B3E0 /* DownloadableImageView.swift */; };
+		1BD7ABBB2196146000E2B3E0 /* StringUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BD7ABBA2196146000E2B3E0 /* StringUtils.swift */; };
 		52CC0638AE915FDBF97F6138 /* Pods_VKChallengeNewsfeed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4134F2182D300A05EE0D7A07 /* Pods_VKChallengeNewsfeed.framework */; };
 /* End PBXBuildFile section */
 
@@ -54,6 +55,7 @@
 		1B293FC42195499600F7AA28 /* NewsfeedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsfeedCell.swift; sourceTree = "<group>"; };
 		1B293FC62195667700F7AA28 /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
 		1BD7ABB72196129F00E2B3E0 /* DownloadableImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadableImageView.swift; sourceTree = "<group>"; };
+		1BD7ABBA2196146000E2B3E0 /* StringUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringUtils.swift; sourceTree = "<group>"; };
 		4134F2182D300A05EE0D7A07 /* Pods_VKChallengeNewsfeed.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VKChallengeNewsfeed.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C684A8B524AE41E20ACBA8EC /* Pods-VKChallengeNewsfeed.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VKChallengeNewsfeed.release.xcconfig"; path = "Pods/Target Support Files/Pods-VKChallengeNewsfeed/Pods-VKChallengeNewsfeed.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -100,6 +102,7 @@
 				1B1F4F102194E946007E3D94 /* Info.plist */,
 				1B293FAA2195066500F7AA28 /* Models */,
 				1B293FC121953D6200F7AA28 /* Views */,
+				1BD7ABB92196144100E2B3E0 /* Helpers */,
 			);
 			path = VKChallengeNewsfeed;
 			sourceTree = "<group>";
@@ -126,10 +129,18 @@
 				1B293FBD21953D1D00F7AA28 /* RoundedView.swift */,
 				1B293FBF21953D3E00F7AA28 /* RoundedImageView.swift */,
 				1B293FC221953E8000F7AA28 /* GradientView.swift */,
-				1B293FC62195667700F7AA28 /* ImageUtils.swift */,
 				1BD7ABB72196129F00E2B3E0 /* DownloadableImageView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		1BD7ABB92196144100E2B3E0 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				1B293FC62195667700F7AA28 /* ImageUtils.swift */,
+				1BD7ABBA2196146000E2B3E0 /* StringUtils.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		A5615C6214903BA57755A0D6 /* Pods */ = {
@@ -261,6 +272,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1BD7ABBB2196146000E2B3E0 /* StringUtils.swift in Sources */,
 				1B293FBC2195085700F7AA28 /* Photo.swift in Sources */,
 				1B1F4F052194E944007E3D94 /* AppDelegate.swift in Sources */,
 				1B293FC52195499600F7AA28 /* NewsfeedCell.swift in Sources */,

@@ -105,7 +105,7 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
     DispatchQueue.main.async {
       self.itemsCountLabel.text =
         String(self.feed.items.count) + " " +
-        self.getPlural(m: self.feed.items.count, cs: ["запись", "записи", "записей"]);
+        self.feed.items.count.toPluralString(["запись", "записи", "записей"]);
       self.itemsCountLabel.isHidden = false
       self.loadingIndicator.isHidden = true
       
@@ -114,20 +114,6 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
       self.tableView.reloadData()
     }
   }
-  
-  func getPlural(m: Int, cs: [String]) -> String {
-    let n = m % 100;
-    if ((n % 10 == 0) || (n % 10 > 4) || (n > 4 && n < 21) || (n % 1 != 0)) {
-      return cs[2];
-    } else
-    if (n % 10 == 1) {
-      return cs[0];
-    } else {
-      return cs[1];
-    }
-  }
-  
-  
   
   func loadMore() {
     self.feed.loadNext(count: 30) { (error) in
