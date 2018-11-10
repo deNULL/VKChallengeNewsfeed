@@ -42,6 +42,7 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
   @IBOutlet weak var viewsCountLabel: UILabel!
   
   var galleryImageViews: [DownloadableImageView] = []
+  var galleryPendingUrls: [String?] = []
   var delegate: NewsfeedCellDelegate? = nil
   var index: Int = 0
   var post: Post? = nil
@@ -158,6 +159,7 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
             imageView.removeFromSuperview()
           }
           galleryImageViews = []
+          galleryPendingUrls = []
         }
         
         // TODO: how to calculate aspect if it's different for each photo?
@@ -172,7 +174,12 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
             let frame = CGRect(x: x, y: 0, width: width - 40, height: height)
             if !stateOnly {
               let imageView = DownloadableImageView(frame: frame)
-              imageView.downloadImageFrom(link: photo.minimumSize.url, contentMode: UIView.ContentMode.scaleAspectFill)
+              if abs(i - state.selectedPhoto) <= 1 {
+                imageView.downloadImageFrom(link: photo.minimumSize.url, contentMode: UIView.ContentMode.scaleAspectFill)
+                galleryPendingUrls.append(nil)
+              } else {
+                galleryPendingUrls.append(photo.minimumSize.url)
+              }
               imageView.clipsToBounds = true
             
               galleryImageViews.append(imageView)
@@ -262,6 +269,13 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
     let value = scrollView.contentOffset.x / scrollView.frame.size.width
     galleryPageControl.currentPage = Int(round(value))
     //delegate?.selectedPhotoChanged(cell: self, selectedPhoto: Int(round(value)))
+    for offs in -1...1 {
+      let page = galleryPageControl.currentPage + offs
+      if page >= 0 && page < galleryPendingUrls.count && galleryPendingUrls[page] != nil {
+        galleryImageViews[page].downloadImageFrom(link: galleryPendingUrls[page]!, contentMode: .scaleToFill)
+        galleryPendingUrls[page] = nil
+      }
+    }
   }
   
   func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {

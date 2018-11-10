@@ -22,8 +22,11 @@ public class Photo {
   
   init(json: [String: Any], profiles: ProfileCollection) {
     id = json["id"] as? Int
-    let ownerId = json["owner_id"] as! Int
-    owner = profiles[ownerId]
+    if let ownerId = json["owner_id"] as? Int {
+      owner = profiles[ownerId]
+    } else {
+      owner = nil
+    }
     
     let screenWidth = UIScreen.main.bounds.width * UIScreen.main.scale
     var minSize: PhotoSize? = nil
