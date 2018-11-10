@@ -55,6 +55,13 @@ public class Photo {
         maxSize = PhotoSize(url: url, width: width, height: height)
       }
     }
+    
+    if maxSize == nil {
+      minimumSize = PhotoSize(url: "", width: 1, height: 1)
+      maximumSize = minimumSize
+      return
+    }
+    
     minimumSize = minSize == nil ? maxSize! : minSize!
     maximumSize = maxSize!
   }

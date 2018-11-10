@@ -83,6 +83,15 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
     return false
   }
   
+  func getSearchQuery() -> String? {
+    if let query = searchTextField.text {
+      if !query.isEmpty {
+        return query
+      }
+    }
+    return nil
+  }
+  
   func initNewsfeed() {
     itemsCountLabel.isHidden = true
     loadingIndicator.startAnimating()
@@ -154,7 +163,7 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
     let isGallery = post.attachments.count > 1
     let cell = tableView.dequeueReusableCell(withIdentifier: isGallery ? "PostGallery" : "Post", for: indexPath) as! NewsfeedCell
     cell.delegate = self
-    cell.setupCell(index: indexPath.row, post: post, state: cells[indexPath.row])
+    cell.setupCell(index: indexPath.row, post: post, state: cells[indexPath.row], query: getSearchQuery())
     return cell
   }
   

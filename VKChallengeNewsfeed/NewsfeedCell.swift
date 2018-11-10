@@ -75,13 +75,16 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
     }
   }
   
+  override func layoutSubviews() {
+    //
+  }
+  
   static var measuringLabel: PostTextLabel = PostTextLabel(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
   static func calculateHeight(post: Post, state: NewsfeedCellState, width: CGFloat) -> CGFloat {
     var height: CGFloat = 58.0 /* Above text */ + 44.0 /* Buttons below */ + 12.0 /* Spacing */
-    measuringLabel.parseText(text: post.text, query: nil)
-    measuringLabel.font = UIFont.boldSystemFont(ofSize: 15.0)
     measuringLabel.numberOfLines = 0
     measuringLabel.frame = CGRect(x: 0, y: 0, width: width - 24, height: 0)
+    measuringLabel.parseText(text: post.text, query: nil, dirty: true)
     let lines = measuringLabel.calculateMaxLines()
     let isExpanded = state.isExpanded || lines <= 8
     if isExpanded {
@@ -107,13 +110,13 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
     return height
   }
   
-  func setupCell(index: Int, post: Post, state: NewsfeedCellState) {
+  func setupCell(index: Int, post: Post, state: NewsfeedCellState, query: String?) {
     self.index = index
     self.post = post
     
     sourceNameLabel.text = post.source.name
     postDateLabel.text = post.date.toRelativeDateString()
-    postTextLabel.parseText(text: post.text, query: nil)
+    postTextLabel.parseText(text: post.text, query: query, dirty: false)
     
     let isExpanded = state.isExpanded || postTextLabel.calculateMaxLines() <= 8
     expandTextLabel.isHidden = isExpanded
