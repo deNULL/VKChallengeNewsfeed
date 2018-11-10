@@ -10,8 +10,15 @@ import UIKit
 
 class DownloadableImageView: RoundedImageView {
   var downloadTask: URLSessionDataTask? = nil
+  var currentUrl: String? = nil
   
   func downloadImageFrom(link: String, contentMode: UIView.ContentMode) {
+    if currentUrl == link && image != nil {
+      return
+    }
+
+    currentUrl = link
+    image = nil
     cancelDownload()
     downloadTask = URLSession.shared.dataTask(with: URL(string: link)!) { (data, response, error) in
       DispatchQueue.main.async {

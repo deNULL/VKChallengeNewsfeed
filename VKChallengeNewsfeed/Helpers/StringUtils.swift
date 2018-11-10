@@ -89,7 +89,7 @@ extension UILabel {
   }
   
   func calculateMaxLines() -> Int {
-    let height = calculateHeight(width: frame.width)
+    let height = calculateHeight(width: frame.width - 8)
     let linesRoundedUp = Int(ceil(height / font.lineHeight))
     return linesRoundedUp
   }

@@ -14,11 +14,13 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   var me: User? = nil
   var feed: PostList = PostList()
   var cells: [NewsfeedCellState] = []
+  var isSearching: Bool = false
   @IBOutlet weak var itemsCountLabel: UILabel!
   @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
   @IBOutlet weak var userpicImageView: DownloadableImageView!
   @IBOutlet weak var footerImageView: UIImageView!
   @IBOutlet weak var searchTextField: UITextField!
+  @IBOutlet weak var searchContainer: RoundedView!
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -26,7 +28,6 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
     let sdkInstance = VKSdk.initialize(withAppId: "6746103")
     sdkInstance?.register(self)
     sdkInstance?.uiDelegate = self
-    
     
     // Uncomment the following line to preserve selection between presentations
     // self.clearsSelectionOnViewWillAppear = false
@@ -38,6 +39,11 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   override func viewDidAppear(_ animated: Bool) {
     let app = UIApplication.shared.delegate as! AppDelegate
     app.window!.bringSubviewToFront(app.statusBackdropView)
+    
+    searchTextField.attributedPlaceholder =
+      NSAttributedString(string: "Поиск",
+                         attributes: [NSAttributedString.Key.foregroundColor: UIColor(red:0.51, green:0.55, blue:0.60, alpha:1.0)])
+ 
     
     VKSdk.wakeUpSession(["friends", "wall"]) { (state, error) in
       if (state == VKAuthorizationState.authorized) {
@@ -77,10 +83,6 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
     let alert = UIAlertController(title: "Ошибка", message: "Не удалось войти", preferredStyle: UIAlertController.Style.alert)
     alert.addAction(UIAlertAction(title: "OK", style: .default))
     self.present(alert, animated: true, completion: nil)
-  }
-  
-  func isSearching() -> Bool {
-    return false
   }
   
   func getSearchQuery() -> String? {
@@ -256,6 +258,36 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   }
   
   @IBAction func changedQuery(_ sender: UITextField) {
+    let nowSearching = sender.text != nil && !sender.text!.isEmpty
+    if nowSearching != isSearching {
+      isSearching = nowSearching
+      
+      UIView.beginAnimations(nil, context: nil)
+      if isSearching {
+        searchContainer.frame = CGRect(
+          x: searchContainer.frame.minX,
+          y: searchContainer.frame.minY,
+          width: searchContainer.frame.width + 48,
+          height: searchContainer.frame.height)
+        userpicImageView.frame = CGRect(
+          x: userpicImageView.frame.minX + 48,
+          y: userpicImageView.frame.minY,
+          width: userpicImageView.frame.width,
+          height: userpicImageView.frame.height)
+      } else {
+        searchContainer.frame = CGRect(
+          x: searchContainer.frame.minX,
+          y: searchContainer.frame.minY,
+          width: searchContainer.frame.width - 48,
+          height: searchContainer.frame.height)
+        userpicImageView.frame = CGRect(
+          x: userpicImageView.frame.minX - 48,
+          y: userpicImageView.frame.minY,
+          width: userpicImageView.frame.width,
+          height: userpicImageView.frame.height)
+      }
+      UIView.commitAnimations()
+    }
     searchFor(text: sender.text)
   }
   /*

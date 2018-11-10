@@ -32,6 +32,7 @@ class PostLayoutManager: NSLayoutManager {
         //UIBezierPath with rounded
         let path = UIBezierPath(roundedRect:
           CGRect(x: rect.minX - 4, y: rect.minY - 1, width: rect.width + 8, height: 22), cornerRadius: 4)
+        context?.resetClip()
         path.fill()
         context?.restoreGState()
       }
@@ -194,15 +195,16 @@ class PostTextLabel: UILabel {
   
   override func layoutSubviews() {
     super.layoutSubviews()
-    textContainer.size = bounds.size
+    // Accounting for padding
+    textContainer.size = CGSize(width: bounds.width - 8, height: bounds.height - 3)
   }
   
   override func drawText(in rect: CGRect) {
     // Calculate the offset of the text in the view
     let glyphRange = layoutManager.glyphRange(for: textContainer)
     
-    layoutManager.drawBackground(forGlyphRange: glyphRange, at: .zero)
-    layoutManager.drawGlyphs(forGlyphRange: glyphRange, at: .zero)
+    layoutManager.drawBackground(forGlyphRange: glyphRange, at: CGPoint(x: 4, y: 1))
+    layoutManager.drawGlyphs(forGlyphRange: glyphRange, at: CGPoint(x: 4, y: 1))
   }
   
   @objc func labelTapped(_ gesture: UITapGestureRecognizer) {

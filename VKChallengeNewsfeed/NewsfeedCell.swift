@@ -89,7 +89,6 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
     var y: CGFloat = 0
   
     if !measureOnly {
-      sourceImageView.image = nil
       sourceImageView.downloadImageFrom(link: post.source.photo, contentMode: UIView.ContentMode.scaleAspectFit)
       
       sourceNameLabel.text = post.source.name
@@ -109,7 +108,8 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
     
     if !measureOnly {
       postTextLabel.numberOfLines = isExpanded ? 0 : 6
-      postTextLabel.frame = CGRect(x: 20, y: y, width: width - 40, height: postTextHeight)
+      // We add paddings (left: 4, right: 4, top: 1, bottom: 2) because we need to draw search highlights
+      postTextLabel.frame = CGRect(x: 20 - 4, y: y - 1, width: width - 40 + 8, height: postTextHeight + 3)
     }
     
     y += postTextHeight
@@ -179,7 +179,6 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
       } else { // Single image
         if !measureOnly {
           singleImageView.cancelDownload()
-          singleImageView.image = nil
           singleImageView.isHidden = false
         }
         
