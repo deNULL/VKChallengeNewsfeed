@@ -171,7 +171,8 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
       state: cells[indexPath.row],
       query: getSearchQuery(),
       width: tableView.bounds.width,
-      measureOnly: false
+      measureOnly: false,
+      stateOnly: false
     )
     return cell
   }
@@ -194,7 +195,13 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   }
   
   func selectedPhotoChanged(cell: NewsfeedCell, selectedPhoto: Int) {
+    tableView.beginUpdates()
     cells[cell.index].selectedPhoto = selectedPhoto
+    tableView.endUpdates()
+    
+    UIView.beginAnimations(nil, context: nil)
+    cell.updateLayout(state: cells[cell.index], width: tableView.frame.width)
+    UIView.commitAnimations()
   }
   
   func expandedText(cell: NewsfeedCell) {
@@ -202,6 +209,10 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
     cells[cell.index].isExpanded = true
     tableView.reloadRows(at: [IndexPath(row: cell.index, section: 0)], with: UITableView.RowAnimation.automatic)
     tableView.endUpdates()
+    
+    //UIView.beginAnimations(nil, context: nil)
+    //cell.updateLayout(state: cells[cell.index], width: tableView.frame.width)
+    //UIView.commitAnimations()
   }
   
   func tappedLink(link: String) {
@@ -229,6 +240,10 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   override func scrollViewDidScroll(_ scrollView: UIScrollView) {
     let app = UIApplication.shared.delegate as! AppDelegate
     app.statusBackdropView.alpha = scrollView.contentOffset.y / 40.0;
+  }
+  
+  override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    searchTextField.resignFirstResponder()
   }
   
   override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

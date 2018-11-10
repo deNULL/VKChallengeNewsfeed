@@ -22,7 +22,7 @@ public class ItemList<ItemType> {
   
   init(json: [String: Any]) {
     items = []
-    profiles = ProfileCollection(users: json["profiles"] as! [Any], groups: json["groups"] as! [Any])
+    profiles = ProfileCollection(users: json["profiles"] as? [Any], groups: json["groups"] as? [Any])
     nextFrom = json["next_from"] as? String
   }
   

@@ -14,6 +14,11 @@ class API {
   static func call(method: String,
                    params: [String: String],
                    onCompletion: @escaping (_ response: Any?, _ error: Error?)->()) {
+    if API.token == nil {
+      onCompletion(nil, NSError(domain: "com.vk.NotAuthorized", code: 0, userInfo: nil))
+      return
+    }
+    
     var request = URLRequest(url: URL(string: "https://api.vk.com/method/" + method)!)
     request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
     request.httpMethod = "POST"

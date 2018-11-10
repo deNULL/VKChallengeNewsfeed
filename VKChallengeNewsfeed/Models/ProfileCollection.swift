@@ -15,10 +15,14 @@ public class ProfileCollection {
     dictionary = [:]
   }
   
-  init(users: [Any], groups: [Any]) {
+  init(users: [Any]?, groups: [Any]?) {
     dictionary = [:]
-    addUsers(list: users)
-    addGroups(list: groups)
+    if let users = users {
+      addUsers(list: users)
+    }
+    if let groups = groups {
+      addGroups(list: groups)
+    }
   }
   
   public subscript(id: Int) -> Profile? {

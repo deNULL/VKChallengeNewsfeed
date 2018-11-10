@@ -45,6 +45,7 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
   var delegate: NewsfeedCellDelegate? = nil
   var index: Int = 0
   var post: Post? = nil
+  var query: String? = nil
   
   override func awakeFromNib() {
     super.awakeFromNib()
@@ -78,17 +79,24 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
   }()
   
   static func calculateHeight(index: Int, post: Post, state: NewsfeedCellState, width: CGFloat) -> CGFloat {
-    return measuringInstance.setupCell(index: index, post: post, state: state, query: nil, width: width, measureOnly: true)
+    return measuringInstance.setupCell(index: index, post: post, state: state, query: nil, width: width, measureOnly: true, stateOnly: false)
+  }
+  
+  func updateLayout(state: NewsfeedCellState, width: CGFloat) {
+    setupCell(index: index, post: post!, state: state, query: query, width: width, measureOnly: false, stateOnly: true)
   }
   
   let LINE: CGFloat = 22.0
-  func setupCell(index: Int, post: Post, state: NewsfeedCellState, query: String?, width: CGFloat, measureOnly: Bool) -> CGFloat {
-    self.index = index
-    self.post = post
+  func setupCell(index: Int, post: Post, state: NewsfeedCellState, query: String?, width: CGFloat, measureOnly: Bool, stateOnly: Bool) -> CGFloat {
+    if !stateOnly {
+      self.index = index
+      self.post = post
+      self.query = query
+    }
     
     var y: CGFloat = 0
   
-    if !measureOnly {
+    if !measureOnly && !stateOnly {
       sourceImageView.downloadImageFrom(link: post.source.photo, contentMode: UIView.ContentMode.scaleAspectFit)
       
       sourceNameLabel.text = post.source.name
@@ -100,43 +108,57 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
     
     y += 57.5
     
-    postTextLabel.parseText(text: post.text, query: query, dirty: false)
-    let postTextFullHeight = postTextLabel.calculateHeight(width: width - 40)
-    let postTextLines = Int(ceil(postTextFullHeight / LINE))
-    let isExpanded = state.isExpanded || postTextLines <= 8
-    let postTextHeight = isExpanded ? postTextFullHeight : (LINE * 6)
-    
-    if !measureOnly {
-      postTextLabel.numberOfLines = isExpanded ? 0 : 6
-      // We add paddings (left: 4, right: 4, top: 1, bottom: 2) because we need to draw search highlights
-      postTextLabel.frame = CGRect(x: 20 - 4, y: y - 1, width: width - 40 + 8, height: postTextHeight + 3)
-    }
-    
-    y += postTextHeight
-    
-    if !measureOnly {
-      expandTextLabel.isHidden = isExpanded
-      if !isExpanded {
-        expandTextLabel.frame = CGRect(x: 20, y: y, width: expandTextLabel.frame.width, height: 18)
+    if post.text.isEmpty {
+      if !measureOnly {
+        postTextLabel.isHidden = true
       }
+      
+      y += 4
+    } else {
+      if !stateOnly {
+        postTextLabel.parseText(text: post.text, query: query, dirty: false)
+      }
+      
+      let postTextFullHeight = postTextLabel.calculateHeight(width: width - 40)
+      let postTextLines = Int(ceil(postTextFullHeight / LINE))
+      let isExpanded = state.isExpanded || postTextLines <= 8
+      let postTextHeight = isExpanded ? postTextFullHeight : (LINE * 6)
+      
+      if !measureOnly {
+        postTextLabel.isHidden = false
+        postTextLabel.numberOfLines = isExpanded ? 0 : 6
+        // We add paddings (left: 4, right: 4, top: 1, bottom: 2) because we need to draw search highlights
+        postTextLabel.frame = CGRect(x: 20 - 4, y: y - 1, width: width - 40 + 8, height: postTextHeight + 3)
+      }
+      
+      y += postTextHeight
+      
+      if !measureOnly {
+        expandTextLabel.isHidden = isExpanded
+        if !isExpanded {
+          expandTextLabel.frame = CGRect(x: 20, y: y, width: expandTextLabel.frame.width, height: 18)
+        }
+      }
+      
+      if !isExpanded {
+        y += 18
+      }
+      
+      y += 10.5
     }
-    
-    if !isExpanded {
-      y += 18
-    }
-    
-    y += 10.5
     
     if post.attachments.count > 0 { // Swipeable collection of photos
-      let photo = (post.attachments[0] as! Photo)
+      let photo = (post.attachments[state.selectedPhoto] as! Photo)
       let aspect = max(0.4, min(CGFloat(photo.maximumSize.width) / CGFloat(photo.maximumSize.height), 3.0))
       
       if post.attachments.count > 1 {
-        for imageView in galleryImageViews {
-          imageView.cancelDownload()
-          imageView.removeFromSuperview()
+        if !stateOnly {
+          for imageView in galleryImageViews {
+            imageView.cancelDownload()
+            imageView.removeFromSuperview()
+          }
+          galleryImageViews = []
         }
-        galleryImageViews = []
         
         // TODO: how to calculate aspect if it's different for each photo?
         let height = (width - 40) / aspect
@@ -145,15 +167,22 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
           galleryScrollView.frame = CGRect(x: 10, y: 0, width: width - 36, height: height)
 
           var x: CGFloat = 2
+          var i: Int = 0
           for photo in post.attachments as! [Photo] {
-            let imageView = DownloadableImageView(frame: CGRect(x: x, y: 0, width: width - 40, height: height))
-            imageView.downloadImageFrom(link: photo.minimumSize.url, contentMode: UIView.ContentMode.scaleAspectFill)
-            imageView.clipsToBounds = true
+            let frame = CGRect(x: x, y: 0, width: width - 40, height: height)
+            if !stateOnly {
+              let imageView = DownloadableImageView(frame: frame)
+              imageView.downloadImageFrom(link: photo.minimumSize.url, contentMode: UIView.ContentMode.scaleAspectFill)
+              imageView.clipsToBounds = true
             
-            galleryImageViews.append(imageView)
-            galleryScrollView.addSubview(imageView)
+              galleryImageViews.append(imageView)
+              galleryScrollView.addSubview(imageView)
+            } else {
+              galleryImageViews[i].frame = frame
+            }
             
             x += 4 + (width - 40)
+            i += 1
           }
           galleryScrollView.contentSize = CGSize(width: x - 2, height: height)
           
@@ -177,7 +206,7 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
         
         y += 10
       } else { // Single image
-        if !measureOnly {
+        if !measureOnly && !stateOnly {
           singleImageView.cancelDownload()
           singleImageView.isHidden = false
         }
@@ -192,7 +221,7 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
         y += height + 14
       }
     } else { // No supported attachments, text only
-      if !measureOnly {
+      if !measureOnly && !stateOnly {
         singleImageView.cancelDownload()
         singleImageView.image = nil
         singleImageView.isHidden = true
@@ -232,7 +261,11 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
   func scrollViewDidScroll(_ scrollView: UIScrollView) {
     let value = scrollView.contentOffset.x / scrollView.frame.size.width
     galleryPageControl.currentPage = Int(round(value))
-    delegate?.selectedPhotoChanged(cell: self, selectedPhoto: Int(round(value)))
+    //delegate?.selectedPhotoChanged(cell: self, selectedPhoto: Int(round(value)))
+  }
+  
+  func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    delegate?.selectedPhotoChanged(cell: self, selectedPhoto: galleryPageControl.currentPage)
   }
   
   @objc func tapExpand() {

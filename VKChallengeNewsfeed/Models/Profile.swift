@@ -9,8 +9,8 @@
 import Foundation
 
 public protocol Profile {
-  var id: Int { get }
-  var ownerId: Int { get }
-  var name: String { get }
-  var photo: String { get }
+  var id: Int! { get }
+  var ownerId: Int! { get }
+  var name: String! { get }
+  var photo: String! { get }
 }

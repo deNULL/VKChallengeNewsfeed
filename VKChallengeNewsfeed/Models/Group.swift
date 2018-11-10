@@ -9,18 +9,18 @@
 import Foundation
 
 public class Group: Profile {
-  public let id: Int
-  public var ownerId: Int {
+  public let id: Int!
+  public var ownerId: Int! {
     get {
       return -id
     }
   }
-  public let photo: String
-  public let name: String
+  public let photo: String!
+  public let name: String!
   
   init(json: [String: Any]) {
-    id = json["id"] as! Int
-    photo = json["photo_50"] as! String
-    name = json["name"] as! String
+    id = json["id"] as? Int
+    photo = json["photo_50"] as? String
+    name = json["name"] as? String
   }
 }

@@ -9,6 +9,19 @@
 import UIKit
 import VK_ios_sdk
 
+extension UIDevice {
+  var modelName: String {
+    var systemInfo = utsname()
+    uname(&systemInfo)
+    let machineMirror = Mirror(reflecting: systemInfo.machine)
+    let identifier = machineMirror.children.reduce("") { identifier, element in
+      guard let value = element.value as? Int8, value != 0 else { return identifier }
+      return identifier + String(UnicodeScalar(UInt8(value)))
+    }
+    return identifier
+  }
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
   var window: UIWindow?
@@ -16,11 +29,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     let window = self.window!
-    let backgroundView = GradientView(frame:
-        CGRect(x: 0, y: 0,
-               width: max(window.frame.width, window.frame.height),
-               height: max(window.frame.width, window.frame.height)))
-    window.addSubview(backgroundView)
+    
+    let olderDevices = ["iPhone4,1", "iPhone5,1", "iPhone5,2", "iPhone5,3", "iPhone5,4", "iPhone6,1", "iPhone6,1"]
+    if olderDevices.contains(UIDevice.current.modelName) {
+      // Background gradient is barely noticeable, so for performance reason we'll disable it on weaker devices
+      window.backgroundColor = UIColor(red: 0.95, green: 0.95, blue: 0.96, alpha: 1.0)
+    } else {
+      let backgroundView = GradientView(frame:
+          CGRect(x: 0, y: 0,
+                 width: max(window.frame.width, window.frame.height),
+                 height: max(window.frame.width, window.frame.height)))
+      window.addSubview(backgroundView)
+    }
     
     statusBackdropView = UIView(frame: application.statusBarFrame)
     statusBackdropView.layer.shadowColor = UIColor.black.cgColor

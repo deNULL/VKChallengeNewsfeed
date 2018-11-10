@@ -15,44 +15,45 @@ public struct PhotoSize {
 }
 
 public class Photo {
-  let id: Int
+  let id: Int!
   let owner: Profile?
   let minimumSize: PhotoSize
   let maximumSize: PhotoSize
   
   init(json: [String: Any], profiles: ProfileCollection) {
-    id = json["id"] as! Int
+    id = json["id"] as? Int
     let ownerId = json["owner_id"] as! Int
     owner = profiles[ownerId]
     
     let screenWidth = UIScreen.main.bounds.width * UIScreen.main.scale
-    let sizes = json["sizes"] as! [Any]
-    
-    var maxw = 0
-    var minw = 100000
-    for size in sizes {
-      let sz = size as! [String: Any]
-      let width = sz["width"] as! Int
-      
-      maxw = max(maxw, width)
-      if CGFloat(width) >= screenWidth * 0.8 { // We can allow upscaling ~20% smaller images for better performance
-        minw = min(minw, width)
-      }
-    }
-    
     var minSize: PhotoSize? = nil
     var maxSize: PhotoSize? = nil
-    for size in sizes {
-      let sz = size as! [String: Any]
-      let url = sz["url"] as! String
-      let width = sz["width"] as! Int
-      let height = sz["height"] as! Int
-      
-      if width == minw {
-        minSize = PhotoSize(url: url, width: width, height: height)
+    
+    if let sizes = json["sizes"] as? [Any] {
+      var maxw = 0
+      var minw = 100000
+      for size in sizes {
+        let sz = size as! [String: Any]
+        let width = sz["width"] as! Int
+        
+        maxw = max(maxw, width)
+        if CGFloat(width) >= screenWidth * 0.8 { // We can allow upscaling ~20% smaller images for better performance
+          minw = min(minw, width)
+        }
       }
-      if width == maxw {
-        maxSize = PhotoSize(url: url, width: width, height: height)
+      
+      for size in sizes {
+        let sz = size as! [String: Any]
+        let url = sz["url"] as! String
+        let width = sz["width"] as! Int
+        let height = sz["height"] as! Int
+        
+        if width == minw {
+          minSize = PhotoSize(url: url, width: width, height: height)
+        }
+        if width == maxw {
+          maxSize = PhotoSize(url: url, width: width, height: height)
+        }
       }
     }
     
