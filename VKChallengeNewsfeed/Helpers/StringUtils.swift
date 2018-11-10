@@ -81,12 +81,16 @@ extension String {
 
 
 extension UILabel {
-  func calculateMaxLines() -> Int {
-    let maxSize = CGSize(width: frame.size.width, height: CGFloat(Float.infinity))
-    let charSize = font.lineHeight
-    let text = (self.attributedText ?? NSAttributedString()) as NSAttributedString
+  func calculateHeight(width: CGFloat) -> CGFloat {
+    let maxSize = CGSize(width: width, height: CGFloat(Float.infinity))
+    let text = (attributedText ?? NSAttributedString()) as NSAttributedString
     let textSize = text.boundingRect(with: maxSize, options: .usesLineFragmentOrigin, context: nil)
-    let linesRoundedUp = Int(ceil(textSize.height / charSize))
+    return textSize.height
+  }
+  
+  func calculateMaxLines() -> Int {
+    let height = calculateHeight(width: frame.width)
+    let linesRoundedUp = Int(ceil(height / font.lineHeight))
     return linesRoundedUp
   }
 }

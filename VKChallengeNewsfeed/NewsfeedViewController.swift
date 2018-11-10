@@ -163,24 +163,28 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
     let isGallery = post.attachments.count > 1
     let cell = tableView.dequeueReusableCell(withIdentifier: isGallery ? "PostGallery" : "Post", for: indexPath) as! NewsfeedCell
     cell.delegate = self
-    cell.setupCell(index: indexPath.row, post: post, state: cells[indexPath.row], query: getSearchQuery())
+    cell.setupCell(
+      index: indexPath.row,
+      post: post,
+      state: cells[indexPath.row],
+      query: getSearchQuery(),
+      width: tableView.bounds.width,
+      measureOnly: false
+    )
     return cell
   }
   
-  /*
   override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
     return NewsfeedCell.calculateHeight(
+      index: indexPath.row,
       post: feed.items[indexPath.row],
       state: cells[indexPath.row],
       width: tableView.bounds.width
     )
   }
-   */
   override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-    if indexPath.row >= feed.items.count {
-      return 2.0
-    }
     return NewsfeedCell.calculateHeight(
+      index: indexPath.row,
       post: feed.items[indexPath.row],
       state: cells[indexPath.row],
       width: tableView.bounds.width

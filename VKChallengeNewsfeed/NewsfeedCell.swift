@@ -20,31 +20,28 @@ protocol NewsfeedCellDelegate {
 }
 
 class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
-  @IBOutlet weak var postTextLabel: PostTextLabel!
-  @IBOutlet weak var postTextConstraint: NSLayoutConstraint!
-  @IBOutlet weak var expandTextLabel: UILabel!
-  @IBOutlet weak var expandTextConstraint: NSLayoutConstraint!
   @IBOutlet weak var backgroundImageView: UIImageView!
   @IBOutlet weak var sourceImageView: DownloadableImageView!
   @IBOutlet weak var sourceNameLabel: UILabel!
-  @IBOutlet weak var likesCountLabel: UILabel!
-  @IBOutlet weak var commentsCountLabel: UILabel!
-  @IBOutlet weak var repostsCountLabel: UILabel!
-  @IBOutlet weak var viewsCountLabel: UILabel!
+  @IBOutlet weak var postDateLabel: UILabel!
+  @IBOutlet var postTextLabel: PostTextLabel!
+  @IBOutlet weak var expandTextLabel: UILabel!
   @IBOutlet weak var singleImageView: DownloadableImageView!
   @IBOutlet weak var galleryContainerView: UIView!
   @IBOutlet weak var galleryScrollView: UIScrollView!
   @IBOutlet weak var galleryContentView: UIView!
   @IBOutlet weak var galleryPageControl: UIPageControl!
   @IBOutlet weak var gallerySeparatorView: UIView!
-  @IBOutlet weak var postDateLabel: UILabel!
-  
-  var singleAspectConstraint: NSLayoutConstraint?
-  var galleryAspectConstraint: NSLayoutConstraint?
+  @IBOutlet weak var likesImageView: UIImageView!
+  @IBOutlet weak var likesCountLabel: UILabel!
+  @IBOutlet weak var commentsImageView: UIImageView!
+  @IBOutlet weak var commentsCountLabel: UILabel!
+  @IBOutlet weak var repostsImageView: UIImageView!
+  @IBOutlet weak var repostsCountLabel: UILabel!
+  @IBOutlet weak var viewsImageView: UIImageView!
+  @IBOutlet weak var viewsCountLabel: UILabel!
   
   var galleryImageViews: [DownloadableImageView] = []
-  var galleryConstraints: [NSLayoutConstraint] = []
-  
   var delegate: NewsfeedCellDelegate? = nil
   var index: Int = 0
   var post: Post? = nil
@@ -79,146 +76,154 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
     //
   }
   
-  static var measuringLabel: PostTextLabel = PostTextLabel(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
-  static func calculateHeight(post: Post, state: NewsfeedCellState, width: CGFloat) -> CGFloat {
-    var height: CGFloat = 58.0 /* Above text */ + 44.0 /* Buttons below */ + 12.0 /* Spacing */
-    measuringLabel.numberOfLines = 0
-    measuringLabel.frame = CGRect(x: 0, y: 0, width: width - 24, height: 0)
-    measuringLabel.parseText(text: post.text, query: nil, dirty: true)
-    let lines = measuringLabel.calculateMaxLines()
-    let isExpanded = state.isExpanded || lines <= 8
-    if isExpanded {
-      height += CGFloat(lines) * 22.0
-    } else {
-      height += 7 * 22.0
-    }
-    
-    let isGallery = post.attachments.count > 1
-    if isGallery {
-      let photo = (post.attachments[0] as! Photo)
-      height += CGFloat(photo.maximumSize.height) * (width / CGFloat(photo.maximumSize.width))
-      height += 6.0 + 39.0
-    } else
-    if post.attachments.count > 0 {
-      let photo = (post.attachments[0] as! Photo)
-      height += CGFloat(photo.maximumSize.height) * (width / CGFloat(photo.maximumSize.width))
-      height += 6.0 + 4.0
-    } else {
-      height += 4.0
-    }
-    
-    return height
+  static let measuringInstance: NewsfeedCell = {
+    let cell = NewsfeedCell(frame: .zero)
+    cell.postTextLabel = PostTextLabel(frame: .zero)
+    return cell
+  }()
+  
+  static func calculateHeight(index: Int, post: Post, state: NewsfeedCellState, width: CGFloat) -> CGFloat {
+    return measuringInstance.setupCell(index: index, post: post, state: state, query: nil, width: width, measureOnly: true)
   }
   
-  func setupCell(index: Int, post: Post, state: NewsfeedCellState, query: String?) {
+  let LINE: CGFloat = 22.0
+  func setupCell(index: Int, post: Post, state: NewsfeedCellState, query: String?, width: CGFloat, measureOnly: Bool) -> CGFloat {
     self.index = index
     self.post = post
     
-    sourceNameLabel.text = post.source.name
-    postDateLabel.text = post.date.toRelativeDateString()
+    var y: CGFloat = 0
+  
+    if !measureOnly {
+      sourceImageView.image = nil
+      sourceImageView.downloadImageFrom(link: post.source.photo, contentMode: UIView.ContentMode.scaleAspectFit)
+      
+      sourceNameLabel.text = post.source.name
+      sourceNameLabel.frame = CGRect(x: 70, y: 14, width: width - 90, height: 17)
+      
+      postDateLabel.text = post.date.toRelativeDateString()
+      postDateLabel.frame = CGRect(x: 70, y: 32, width: width - 90, height: 14.33)
+    }
+    
+    y += 58
+    
     postTextLabel.parseText(text: post.text, query: query, dirty: false)
+    let postTextFullHeight = postTextLabel.calculateHeight(width: width - 40)
+    let postTextLines = Int(ceil(postTextFullHeight / LINE))
+    let isExpanded = state.isExpanded || postTextLines <= 8
+    let postTextHeight = isExpanded ? postTextFullHeight : (LINE * 6)
     
-    let isExpanded = state.isExpanded || postTextLabel.calculateMaxLines() <= 8
-    expandTextLabel.isHidden = isExpanded
-    expandTextConstraint.constant = isExpanded ? 0.0 : 22.0
-    postTextLabel.numberOfLines = isExpanded ? 0 : 6
+    if !measureOnly {
+      postTextLabel.numberOfLines = isExpanded ? 0 : 6
+      postTextLabel.frame = CGRect(x: 20, y: y, width: width - 40, height: postTextHeight)
+    }
     
-    likesCountLabel.text = post.likes.toShortString()
-    commentsCountLabel.text = post.comments.toShortString()
-    repostsCountLabel.text = post.reposts.toShortString()
-    viewsCountLabel.text = post.views.toShortString()
+    y += postTextHeight + 6
     
-    sourceImageView.downloadImageFrom(link: post.source.photo, contentMode: UIView.ContentMode.scaleAspectFit)
-    
-    postTextConstraint.constant = post.attachments.count > 0 ? 6.0 : 0.0
-    
-    let isGallery = post.attachments.count > 1
-    if isGallery {
-      if galleryAspectConstraint != nil {
-        galleryScrollView.removeConstraint(galleryAspectConstraint!)
-      }
-      galleryScrollView.removeConstraints(galleryConstraints)
-      for imageView in galleryImageViews {
-        imageView.cancelDownload()
-        imageView.removeFromSuperview()
-      }
-      galleryImageViews = []
-      galleryConstraints = []
-      
-      let photo = (post.attachments[0] as! Photo) // TODO: how to calculate aspect if it's different for each photo?
-      
-      galleryPageControl.numberOfPages = post.attachments.count
-      galleryPageControl.currentPage = state.selectedPhoto
-      galleryAspectConstraint = NSLayoutConstraint(
-        item: galleryScrollView,
-        attribute: NSLayoutConstraint.Attribute.width,
-        relatedBy: NSLayoutConstraint.Relation.equal,
-        toItem: galleryScrollView,
-        attribute: NSLayoutConstraint.Attribute.height,
-        multiplier: CGFloat(photo.maximumSize.width) / CGFloat(photo.maximumSize.height),
-        constant: 0.0)
-      galleryScrollView.addConstraint(galleryAspectConstraint!)
-      
-      var previousImageView: UIImageView? = nil
-      for photo in post.attachments as! [Photo] {
-        let imageView = DownloadableImageView(frame: CGRect(x: 0.0, y: 0.0, width: 0.0, height: 0.0))
-        galleryContentView.addSubview(imageView)
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.clipsToBounds = true
-        
-        let constraintWidth = NSLayoutConstraint(item: imageView, attribute: NSLayoutConstraint.Attribute.width, relatedBy: NSLayoutConstraint.Relation.equal, toItem: galleryScrollView, attribute: NSLayoutConstraint.Attribute.width, multiplier: 1.0, constant: -4.0)
-        galleryScrollView.addConstraint(constraintWidth)
-        
-        let constraintHeight = NSLayoutConstraint(item: imageView, attribute: NSLayoutConstraint.Attribute.height, relatedBy: NSLayoutConstraint.Relation.equal, toItem: galleryScrollView, attribute: NSLayoutConstraint.Attribute.height, multiplier: 1.0, constant: 0.0)
-        galleryScrollView.addConstraint(constraintHeight)
-        
-        let constraintTop = previousImageView == nil ? NSLayoutConstraint(item: imageView, attribute: NSLayoutConstraint.Attribute.top, relatedBy: NSLayoutConstraint.Relation.equal, toItem: galleryContentView, attribute: NSLayoutConstraint.Attribute.top, multiplier: 1.0, constant: 0.0) :
-          NSLayoutConstraint(item: imageView, attribute: NSLayoutConstraint.Attribute.centerY, relatedBy: NSLayoutConstraint.Relation.equal, toItem: previousImageView!, attribute: NSLayoutConstraint.Attribute.centerY, multiplier: 1.0, constant: 0.0)
-        galleryScrollView.addConstraint(constraintTop)
-        
-        let constraintLeft = previousImageView == nil ?
-          NSLayoutConstraint(item: imageView, attribute: NSLayoutConstraint.Attribute.leading, relatedBy: NSLayoutConstraint.Relation.equal, toItem: galleryContentView, attribute: NSLayoutConstraint.Attribute.leading, multiplier: 1.0, constant: 2.0) :
-          NSLayoutConstraint(item: imageView, attribute: NSLayoutConstraint.Attribute.leading, relatedBy: NSLayoutConstraint.Relation.equal, toItem: previousImageView, attribute: NSLayoutConstraint.Attribute.trailing, multiplier: 1.0, constant: 4.0)
-        galleryScrollView.addConstraint(constraintLeft)
-        
-        
-        imageView.downloadImageFrom(link: photo.minimumSize.url, contentMode: UIView.ContentMode.scaleAspectFill)
-        
-        previousImageView = imageView
-        galleryImageViews.append(imageView)
-        galleryConstraints.append(contentsOf: [constraintWidth, constraintHeight, constraintLeft, constraintTop])
-      }
-      
-      let constraintRight = NSLayoutConstraint(item: previousImageView!, attribute: NSLayoutConstraint.Attribute.trailing, relatedBy: NSLayoutConstraint.Relation.equal, toItem: galleryContentView, attribute: NSLayoutConstraint.Attribute.trailing, multiplier: 1.0, constant: 2.0)
-      galleryScrollView.addConstraint(constraintRight)
-      galleryConstraints.append(constraintRight)
-      
-      let x = CGFloat(state.selectedPhoto) * galleryScrollView.frame.size.width
-      galleryScrollView.setContentOffset(CGPoint(x: x, y: 0), animated: false)
-    } else {
-      singleImageView.cancelDownload()
-      singleImageView.image = nil
-      if singleAspectConstraint != nil {
-        singleImageView.removeConstraint(singleAspectConstraint!)
-      }
-      
-      if post.attachments.count == 1 {
-        let photo = (post.attachments[0] as! Photo)
-        
-        singleAspectConstraint = NSLayoutConstraint(
-          item: singleImageView,
-          attribute: NSLayoutConstraint.Attribute.width,
-          relatedBy: NSLayoutConstraint.Relation.equal,
-          toItem: singleImageView,
-          attribute: NSLayoutConstraint.Attribute.height,
-          multiplier: CGFloat(photo.maximumSize.width) / CGFloat(photo.maximumSize.height),
-          constant: 0.0)
-        //singleAspectConstraint?.priority = UILayoutPriority.defaultHigh
-        singleImageView.addConstraint(singleAspectConstraint!)
-        singleImageView.downloadImageFrom(link: photo.minimumSize.url,
-                                          contentMode: UIView.ContentMode.scaleToFill)
+    if !measureOnly {
+      expandTextLabel.isHidden = isExpanded
+      if !isExpanded {
+        expandTextLabel.frame = CGRect(x: 20, y: y - 22, width: expandTextLabel.frame.width, height: 18)
       }
     }
+    
+    if !isExpanded {
+      y += 16
+    }
+    
+    
+    if post.attachments.count > 0 {
+      let photo = (post.attachments[0] as! Photo)
+      let aspect = CGFloat(photo.maximumSize.width) / CGFloat(photo.maximumSize.height)
+      
+      if post.attachments.count > 1 {
+        for imageView in galleryImageViews {
+          imageView.cancelDownload()
+          imageView.removeFromSuperview()
+        }
+        galleryImageViews = []
+        
+        // TODO: how to calculate aspect if it's different for each photo?
+        let height = (width - 40) / aspect
+        if !measureOnly {
+          galleryContainerView.frame = CGRect(x: 8, y: y, width: width - 16, height: height)
+          galleryScrollView.frame = CGRect(x: 10, y: 0, width: width - 36, height: height)
+
+          var x: CGFloat = 2
+          for photo in post.attachments as! [Photo] {
+            let imageView = DownloadableImageView(frame: CGRect(x: x, y: 0, width: width - 40, height: height))
+            galleryContentView.addSubview(imageView)
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            imageView.clipsToBounds = true
+            
+            x += 4 + width - 40
+            imageView.downloadImageFrom(link: photo.minimumSize.url, contentMode: UIView.ContentMode.scaleAspectFill)
+            
+            galleryImageViews.append(imageView)
+          }
+          galleryContentView.frame = CGRect(x: 0, y: 0, width: x - 2, height: height)
+          galleryScrollView.contentSize = CGSize(width: x - 2, height: height)
+        }
+        
+        y += height
+        
+        if !measureOnly {
+          galleryPageControl.frame = CGRect(x: 8, y: y, width: width - 16, height: 37)
+          galleryPageControl.numberOfPages = post.attachments.count
+          galleryPageControl.currentPage = state.selectedPhoto
+        }
+        
+        y += 37
+        
+        if !measureOnly {
+          gallerySeparatorView.frame = CGRect(x: 20, y: y, width: width - 40, height: 1)
+        }
+        
+        y += 10
+      } else {
+        if !measureOnly {
+          singleImageView.cancelDownload()
+          singleImageView.image = nil
+        }
+        
+        let height = (width - 16) / aspect
+        if !measureOnly {
+          singleImageView.frame = CGRect(x: 8, y: y, width: width - 16, height: height)
+          singleImageView.downloadImageFrom(link: photo.minimumSize.url,
+                                            contentMode: UIView.ContentMode.scaleToFill)
+        }
+        
+        y += height + 14
+      }
+    } else {
+      if !measureOnly {
+        singleImageView.cancelDownload()
+        singleImageView.image = nil
+        singleImageView.isHidden = true
+      }
+    }
+    
+    if !measureOnly {
+      likesImageView.frame = CGRect(x: 24, y: y, width: 24, height: 24)
+      likesCountLabel.frame = CGRect(x: 53, y: y + 3, width: 50, height: 17)
+      likesCountLabel.text = post.likes.toShortString()
+      commentsImageView.frame = CGRect(x: 110, y: y, width: 24, height: 24)
+      commentsCountLabel.frame = CGRect(x: 139, y: y + 3, width: 50, height: 17)
+      commentsCountLabel.text = post.comments.toShortString()
+      repostsImageView.frame = CGRect(x: 195, y: y, width: 24, height: 24)
+      repostsCountLabel.frame = CGRect(x: 224, y: y + 3, width: 50, height: 17)
+      repostsCountLabel.text = post.reposts.toShortString()
+      viewsImageView.frame = CGRect(x: width - 73, y: y + 2, width: 20, height: 20)
+      viewsCountLabel.frame = CGRect(x: width - 51, y: y + 6, width: 43, height: 11)
+      viewsCountLabel.text = post.views.toShortString()
+    }
+    
+    y += 34
+    
+    if !measureOnly {
+      backgroundImageView.frame = CGRect(x: -10, y: 0, width: width + 20, height: y + 18)
+    }
+    
+    return y + 12
   }
   
   @IBAction func pageChanged(_ sender: UIPageControl) {

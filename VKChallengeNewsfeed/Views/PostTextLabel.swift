@@ -178,7 +178,6 @@ class PostTextLabel: UILabel {
           words.append(word)
         }
         let pattern = "(^|[^A-Za-z0-9_А-Яа-яЁё-])((" + words.joined(separator: "|") + ")" + "[A-Za-z0-9_А-Яа-яЁё-]{0,3})" + "($|[^A-Za-z0-9_А-Яа-яЁё-])"
-        print(pattern)
         let search = try? NSRegularExpression(pattern: pattern, options: [NSRegularExpression.Options.caseInsensitive, NSRegularExpression.Options.anchorsMatchLines])
         matches = search?.matches(in: str, options: [], range: NSRange(location: 0, length: str.utf16.count))
         
