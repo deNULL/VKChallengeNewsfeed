@@ -61,7 +61,6 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
     }
   
     expandTextLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapExpand)))
-    
     postTextLabel.onCharacterTapped = characterTapped
   }
   
@@ -70,10 +69,6 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
     if let link = attrs?[NSAttributedString.Key.link] as? String {
       delegate?.tappedLink(link: link)
     }
-  }
-  
-  override func layoutSubviews() {
-    //
   }
   
   static let measuringInstance: NewsfeedCell = {
@@ -151,16 +146,14 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
           var x: CGFloat = 2
           for photo in post.attachments as! [Photo] {
             let imageView = DownloadableImageView(frame: CGRect(x: x, y: 0, width: width - 40, height: height))
-            galleryContentView.addSubview(imageView)
-            imageView.translatesAutoresizingMaskIntoConstraints = false
+            imageView.downloadImageFrom(link: photo.minimumSize.url, contentMode: UIView.ContentMode.scaleAspectFill)
             imageView.clipsToBounds = true
             
-            x += 4 + width - 40
-            imageView.downloadImageFrom(link: photo.minimumSize.url, contentMode: UIView.ContentMode.scaleAspectFill)
-            
             galleryImageViews.append(imageView)
+            galleryScrollView.addSubview(imageView)
+            
+            x += 4 + (width - 40)
           }
-          galleryContentView.frame = CGRect(x: 0, y: 0, width: x - 2, height: height)
           galleryScrollView.contentSize = CGSize(width: x - 2, height: height)
         }
         

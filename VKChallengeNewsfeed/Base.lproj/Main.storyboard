@@ -283,13 +283,6 @@
                                                 <scrollView verifyAmbiguity="off" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" contentInsetAdjustmentBehavior="always" translatesAutoresizingMaskIntoConstraints="NO" id="Q3V-wk-k39">
                                                     <rect key="frame" x="10" y="0.0" width="378" height="301.33333333333331"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <subviews>
-                                                        <view verifyAmbiguity="off" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7yT-sg-0YE">
-                                                            <rect key="frame" x="0.0" y="0.0" width="378" height="301.33333333333331"/>
-                                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                        </view>
-                                                    </subviews>
                                                 </scrollView>
                                             </subviews>
                                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -367,7 +360,6 @@
                                     <outlet property="commentsImageView" destination="pRN-gg-kdp" id="KKF-Jw-amG"/>
                                     <outlet property="expandTextLabel" destination="849-CV-4KY" id="Pbg-Ni-6kL"/>
                                     <outlet property="galleryContainerView" destination="cWg-XK-tlF" id="69R-Fs-Z2m"/>
-                                    <outlet property="galleryContentView" destination="7yT-sg-0YE" id="ceK-hw-Y0C"/>
                                     <outlet property="galleryPageControl" destination="TDX-kL-htv" id="oEF-S6-347"/>
                                     <outlet property="galleryScrollView" destination="Q3V-wk-k39" id="odh-kx-gyX"/>
                                     <outlet property="gallerySeparatorView" destination="ygF-rM-T6D" id="gjR-fq-3g3"/>
