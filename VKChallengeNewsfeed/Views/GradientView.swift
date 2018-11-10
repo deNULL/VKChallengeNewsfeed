@@ -25,6 +25,7 @@ class GradientView: UIView {
   }
   
   private func setupGradient() {
+    backgroundColor = startColor
     var gradient: CAGradientLayer? = window?.layer.sublayers?.first { $0.name == gradientLayerName } as? CAGradientLayer
     if gradient == nil {
       gradient = CAGradientLayer()

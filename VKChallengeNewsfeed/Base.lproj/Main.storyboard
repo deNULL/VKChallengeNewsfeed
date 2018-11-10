@@ -21,22 +21,13 @@
                             <rect key="frame" x="0.0" y="0.0" width="414" height="80"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxY="YES"/>
                             <subviews>
-                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HGf-61-S48" customClass="DownloadableImageView" customModule="VKChallengeNewsfeed" customModuleProvider="target">
-                                    <rect key="frame" x="331" y="36" width="36" height="36"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <userDefinedRuntimeAttributes>
-                                        <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
-                                            <real key="value" value="18"/>
-                                        </userDefinedRuntimeAttribute>
-                                    </userDefinedRuntimeAttributes>
-                                </imageView>
                                 <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="U4H-gL-F7s" customClass="RoundedView" customModule="VKChallengeNewsfeed" customModuleProvider="target">
-                                    <rect key="frame" x="8" y="36" width="315" height="36"/>
-                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <rect key="frame" x="8" y="36" width="354" height="36"/>
+                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                     <subviews>
                                         <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" usesAttributedText="YES" placeholder="Поиск…" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="kfc-kL-2Cs">
-                                            <rect key="frame" x="32" y="0.0" width="275" height="36"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                            <rect key="frame" x="32" y="0.0" width="314" height="36"/>
+                                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                             <attributedString key="attributedText"/>
                                             <textInputTraits key="textInputTraits"/>
                                         </textField>
@@ -56,8 +47,17 @@
                                         </userDefinedRuntimeAttribute>
                                     </userDefinedRuntimeAttributes>
                                 </view>
+                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="HGf-61-S48" customClass="DownloadableImageView" customModule="VKChallengeNewsfeed" customModuleProvider="target">
+                                    <rect key="frame" x="370" y="36" width="36" height="36"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxY="YES"/>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                            <real key="value" value="18"/>
+                                        </userDefinedRuntimeAttribute>
+                                    </userDefinedRuntimeAttributes>
+                                </imageView>
                             </subviews>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         </view>
                         <view key="tableFooterView" contentMode="scaleToFill" id="XSV-74-OC5">
                             <rect key="frame" x="0.0" y="1064" width="414" height="52"/>
@@ -112,16 +112,10 @@
                                             </attributedString>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q95-F8-A4V">
-                                            <rect key="frame" x="363" y="438.66666666666669" width="8" height="11"/>
-                                            <attributedString key="attributedText">
-                                                <fragment content="0">
-                                                    <attributes>
-                                                        <color key="NSColor" red="0.6588235294117647" green="0.67843137254901964" blue="0.69803921568627447" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <font key="NSFont" size="14" name="SFProText-Medium"/>
-                                                    </attributes>
-                                                </fragment>
-                                            </attributedString>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="q95-F8-A4V">
+                                            <rect key="frame" x="363" y="438.66666666666669" width="9" height="11"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" red="0.6588235294117647" green="0.67843137254901964" blue="0.69803921568627447" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="XsJ-p4-7DB" customClass="DownloadableImageView" customModule="VKChallengeNewsfeed" customModuleProvider="target">
@@ -135,16 +129,10 @@
                                                 <constraint firstAttribute="height" constant="20" id="XOb-9U-nq4"/>
                                             </constraints>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ybJ-m8-hRA">
-                                            <rect key="frame" x="221" y="435.66666666666669" width="8" height="16.666666666666686"/>
-                                            <attributedString key="attributedText">
-                                                <fragment content="0">
-                                                    <attributes>
-                                                        <color key="NSColor" red="0.50588235294117645" green="0.5490196078431373" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <font key="NSFont" size="14" name="SFProText-Medium"/>
-                                                    </attributes>
-                                                </fragment>
-                                            </attributedString>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ybJ-m8-hRA">
+                                            <rect key="frame" x="223" y="435.66666666666669" width="9" height="17"/>
+                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
+                                            <color key="textColor" red="0.50588235294117645" green="0.5490196078431373" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Like_outline_24" translatesAutoresizingMaskIntoConstraints="NO" id="xLV-0T-aiE">
@@ -156,39 +144,27 @@
                                             </constraints>
                                         </imageView>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Comment_outline_24" translatesAutoresizingMaskIntoConstraints="NO" id="LYo-6V-XJt">
-                                            <rect key="frame" x="109" y="432" width="24" height="24"/>
+                                            <rect key="frame" x="110" y="432" width="24" height="24"/>
                                             <color key="tintColor" red="0.59999999999999998" green="0.63529411759999999" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="24" id="Bkj-9B-xC0"/>
                                                 <constraint firstAttribute="width" constant="24" id="wSj-kM-JcF"/>
                                             </constraints>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OqR-nm-vQy">
-                                            <rect key="frame" x="137" y="435.66666666666669" width="8" height="16.666666666666686"/>
-                                            <attributedString key="attributedText">
-                                                <fragment content="0">
-                                                    <attributes>
-                                                        <color key="NSColor" red="0.50588235294117645" green="0.5490196078431373" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <font key="NSFont" size="14" name="SFProText-Medium"/>
-                                                    </attributes>
-                                                </fragment>
-                                            </attributedString>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OqR-nm-vQy">
+                                            <rect key="frame" x="138" y="435.66666666666669" width="9" height="17"/>
+                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
+                                            <color key="textColor" red="0.50588235294117645" green="0.5490196078431373" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UBW-8x-nOO">
-                                            <rect key="frame" x="53" y="435.66666666666669" width="8" height="16.666666666666686"/>
-                                            <attributedString key="attributedText">
-                                                <fragment content="0">
-                                                    <attributes>
-                                                        <color key="NSColor" red="0.50588235294117645" green="0.5490196078431373" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <font key="NSFont" size="14" name="SFProText-Medium"/>
-                                                    </attributes>
-                                                </fragment>
-                                            </attributedString>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UBW-8x-nOO">
+                                            <rect key="frame" x="53" y="435.66666666666669" width="9" height="17"/>
+                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
+                                            <color key="textColor" red="0.50588235294117645" green="0.5490196078431373" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Share_outline_24" translatesAutoresizingMaskIntoConstraints="NO" id="d1E-Gk-jKF">
-                                            <rect key="frame" x="193" y="432" width="24" height="24"/>
+                                            <rect key="frame" x="195" y="432" width="24" height="24"/>
                                             <color key="tintColor" red="0.59999999999999998" green="0.63529411759999999" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="24" id="CsS-oA-fzy"/>
@@ -207,32 +183,19 @@
                                                 </userDefinedRuntimeAttribute>
                                             </userDefinedRuntimeAttributes>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M7d-Bd-ZAm">
-                                            <rect key="frame" x="70" y="32" width="324" height="13"/>
-                                            <attributedString key="attributedText">
-                                                <fragment content="Label">
-                                                    <attributes>
-                                                        <color key="NSColor" red="0.50588235294117645" green="0.5490196078431373" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <font key="NSFont" size="11" name="SFProText-Medium"/>
-                                                    </attributes>
-                                                </fragment>
-                                            </attributedString>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M7d-Bd-ZAm">
+                                            <rect key="frame" x="70" y="31.999999999999996" width="324" height="14.333333333333332"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <color key="textColor" red="0.50588235294117645" green="0.5490196078431373" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RMx-5G-ugS">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RMx-5G-ugS">
                                             <rect key="frame" x="70" y="14" width="324" height="17"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="17" id="kk7-DA-l8V"/>
                                             </constraints>
-                                            <attributedString key="attributedText">
-                                                <fragment content="Label">
-                                                    <attributes>
-                                                        <color key="NSColor" red="0.17254901960784313" green="0.1764705882352941" blue="0.1803921568627451" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <font key="NSFont" size="14" name="SFProText-Medium"/>
-                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
-                                                    </attributes>
-                                                </fragment>
-                                            </attributedString>
+                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
+                                            <color key="textColor" red="0.17254901960784313" green="0.1764705882352941" blue="0.1803921568627451" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
@@ -313,16 +276,10 @@
                                             </attributedString>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CTq-gz-hhW">
-                                            <rect key="frame" x="363" y="438.66666666666669" width="8" height="11"/>
-                                            <attributedString key="attributedText">
-                                                <fragment content="0">
-                                                    <attributes>
-                                                        <color key="NSColor" red="0.6588235294117647" green="0.67843137254901964" blue="0.69803921568627447" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <font key="NSFont" size="14" name="SFProText-Medium"/>
-                                                    </attributes>
-                                                </fragment>
-                                            </attributedString>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CTq-gz-hhW">
+                                            <rect key="frame" x="363" y="438.66666666666669" width="9" height="11"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <color key="textColor" red="0.6588235294117647" green="0.67843137254901964" blue="0.69803921568627447" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="View_20" translatesAutoresizingMaskIntoConstraints="NO" id="fS0-52-q4w">
@@ -333,16 +290,10 @@
                                                 <constraint firstAttribute="width" constant="20" id="aYZ-fm-j39"/>
                                             </constraints>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hQk-PU-KC1">
-                                            <rect key="frame" x="221" y="435.66666666666669" width="8" height="16.666666666666686"/>
-                                            <attributedString key="attributedText">
-                                                <fragment content="0">
-                                                    <attributes>
-                                                        <color key="NSColor" red="0.50588235294117645" green="0.5490196078431373" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <font key="NSFont" size="14" name="SFProText-Medium"/>
-                                                    </attributes>
-                                                </fragment>
-                                            </attributedString>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hQk-PU-KC1">
+                                            <rect key="frame" x="223" y="435.66666666666669" width="9" height="17"/>
+                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
+                                            <color key="textColor" red="0.50588235294117645" green="0.5490196078431373" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Like_outline_24" translatesAutoresizingMaskIntoConstraints="NO" id="enQ-81-dML">
@@ -354,39 +305,27 @@
                                             </constraints>
                                         </imageView>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Comment_outline_24" translatesAutoresizingMaskIntoConstraints="NO" id="pRN-gg-kdp">
-                                            <rect key="frame" x="109" y="432" width="24" height="24"/>
+                                            <rect key="frame" x="110" y="432" width="24" height="24"/>
                                             <color key="tintColor" red="0.59999999999999998" green="0.63529411759999999" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="24" id="CDh-yn-1Co"/>
                                                 <constraint firstAttribute="height" constant="24" id="YCq-p4-KVP"/>
                                             </constraints>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mra-8S-s49">
-                                            <rect key="frame" x="137" y="435.66666666666669" width="8" height="16.666666666666686"/>
-                                            <attributedString key="attributedText">
-                                                <fragment content="0">
-                                                    <attributes>
-                                                        <color key="NSColor" red="0.50588235294117645" green="0.5490196078431373" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <font key="NSFont" size="14" name="SFProText-Medium"/>
-                                                    </attributes>
-                                                </fragment>
-                                            </attributedString>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mra-8S-s49">
+                                            <rect key="frame" x="138" y="435.66666666666669" width="9" height="17"/>
+                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
+                                            <color key="textColor" red="0.50588235294117645" green="0.5490196078431373" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PXi-fb-6wk">
-                                            <rect key="frame" x="53" y="435.66666666666669" width="8" height="16.666666666666686"/>
-                                            <attributedString key="attributedText">
-                                                <fragment content="0">
-                                                    <attributes>
-                                                        <color key="NSColor" red="0.50588235294117645" green="0.5490196078431373" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                                        <font key="NSFont" size="14" name="SFProText-Medium"/>
-                                                    </attributes>
-                                                </fragment>
-                                            </attributedString>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PXi-fb-6wk">
+                                            <rect key="frame" x="53" y="435.66666666666669" width="9" height="17"/>
+                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
+                                            <color key="textColor" red="0.50588235294117645" green="0.5490196078431373" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Share_outline_24" translatesAutoresizingMaskIntoConstraints="NO" id="T4M-li-j23">
-                                            <rect key="frame" x="193" y="432" width="24" height="24"/>
+                                            <rect key="frame" x="195" y="432" width="24" height="24"/>
                                             <color key="tintColor" red="0.59999999999999998" green="0.63529411759999999" blue="0.67843137249999996" alpha="1" colorSpace="calibratedRGB"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="24" id="HVO-Q0-wky"/>
@@ -405,32 +344,19 @@
                                                 </userDefinedRuntimeAttribute>
                                             </userDefinedRuntimeAttributes>
                                         </imageView>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="89M-Pl-98p">
-                                            <rect key="frame" x="70" y="32" width="324" height="13"/>
-                                            <attributedString key="attributedText">
-                                                <fragment content="Label">
-                                                    <attributes>
-                                                        <color key="NSColor" red="0.50588235294117645" green="0.5490196078431373" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <font key="NSFont" size="11" name="SFProText-Medium"/>
-                                                    </attributes>
-                                                </fragment>
-                                            </attributedString>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="89M-Pl-98p">
+                                            <rect key="frame" x="70" y="31.999999999999996" width="324" height="14.333333333333332"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <color key="textColor" red="0.50588235294117645" green="0.5490196078431373" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fhn-r8-p1u">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Fhn-r8-p1u">
                                             <rect key="frame" x="70" y="14" width="324" height="17"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="17" id="sUn-st-JWv"/>
                                             </constraints>
-                                            <attributedString key="attributedText">
-                                                <fragment content="Label">
-                                                    <attributes>
-                                                        <color key="NSColor" red="0.17254901960784313" green="0.1764705882352941" blue="0.1803921568627451" alpha="1" colorSpace="calibratedRGB"/>
-                                                        <font key="NSFont" size="14" name="SFProText-Medium"/>
-                                                        <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
-                                                    </attributes>
-                                                </fragment>
-                                            </attributedString>
+                                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
+                                            <color key="textColor" red="0.17254901960784313" green="0.1764705882352941" blue="0.1803921568627451" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ygF-rM-T6D">

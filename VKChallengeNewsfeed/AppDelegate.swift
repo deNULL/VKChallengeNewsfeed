@@ -12,6 +12,7 @@ import VK_ios_sdk
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
   var window: UIWindow?
+  var statusBackdropView: UIView! = nil
 
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     let window = self.window!
@@ -20,7 +21,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                width: max(window.frame.width, window.frame.height),
                height: max(window.frame.width, window.frame.height)))
     window.addSubview(backgroundView)
+    
+    statusBackdropView = UIView(frame: application.statusBarFrame)
+    statusBackdropView.layer.shadowColor = UIColor.black.cgColor
+    statusBackdropView.layer.shadowOffset = CGSize(width: 0.0, height: 4.0)
+    statusBackdropView.layer.masksToBounds = false
+    statusBackdropView.layer.shadowRadius = 4.0
+    statusBackdropView.layer.shadowOpacity = 0.25
+    statusBackdropView.backgroundColor = .white
+    statusBackdropView.alpha = 0.0
+    window.addSubview(statusBackdropView)
     return true
+  }
+  
+  func application(_ application: UIApplication, didChangeStatusBarOrientation oldStatusBarOrientation: UIInterfaceOrientation) {
+    
+  }
+  
+  func application(_ application: UIApplication, didChangeStatusBarFrame oldStatusBarFrame: CGRect) {
+    if statusBackdropView != nil {
+      statusBackdropView.isHidden = !application.isStatusBarHidden
+      statusBackdropView.frame = application.statusBarFrame
+    }
   }
 
   func applicationWillResignActive(_ application: UIApplication) {

@@ -26,6 +26,7 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
     sdkInstance?.register(self)
     sdkInstance?.uiDelegate = self
     
+    
     // Uncomment the following line to preserve selection between presentations
     // self.clearsSelectionOnViewWillAppear = false
 
@@ -34,6 +35,9 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   }
   
   override func viewDidAppear(_ animated: Bool) {
+    let app = UIApplication.shared.delegate as! AppDelegate
+    app.window!.bringSubviewToFront(app.statusBackdropView)
+    
     VKSdk.wakeUpSession(["friends", "wall"]) { (state, error) in
       if (state == VKAuthorizationState.authorized) {
         API.token = VKSdk.accessToken()?.accessToken
@@ -162,6 +166,11 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
         self.updateCells(reset: true)
       }
     }
+  }
+  
+  override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    let app = UIApplication.shared.delegate as! AppDelegate
+    app.statusBackdropView.alpha = scrollView.contentOffset.y / 40.0;
   }
   
   /*
