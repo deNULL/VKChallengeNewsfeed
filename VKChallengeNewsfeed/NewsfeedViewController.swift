@@ -9,7 +9,8 @@
 import UIKit
 import VK_ios_sdk
 
-class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDelegate {
+class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDelegate, NewsfeedCellDelegate {
+  
   var me: User? = nil
   var feed: PostList = PostList()
   var cells: [NewsfeedCellState] = []
@@ -136,9 +137,20 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
 
   
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: "Post", for: indexPath) as! NewsfeedCell
-    cell.setupCell(post: feed.items[indexPath.row], state: cells[indexPath.row])
+    let post = feed.items[indexPath.row]
+    let isGallery = post.attachments.count > 1
+    let cell = tableView.dequeueReusableCell(withIdentifier: isGallery ? "PostGallery" : "Post", for: indexPath) as! NewsfeedCell
+    cell.delegate = self
+    cell.setupCell(index: indexPath.row, post: post, state: cells[indexPath.row])
     return cell
+  }
+  
+  func selectedPhotoChanged(cell: NewsfeedCell, selectedPhoto: Int) {
+    cells[cell.index].selectedPhoto = selectedPhoto
+  }
+  
+  func expandedText(cell: NewsfeedCell) {
+    cells[cell.index].isExpanded = true
   }
   
   @IBAction func handleRefresh(_ sender: Any) {

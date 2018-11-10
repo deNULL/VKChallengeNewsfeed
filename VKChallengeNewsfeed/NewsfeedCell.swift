@@ -13,7 +13,12 @@ struct NewsfeedCellState {
   var selectedPhoto: Int
 }
 
-class NewsfeedCell: UITableViewCell {
+protocol NewsfeedCellDelegate {
+  func selectedPhotoChanged(cell: NewsfeedCell, selectedPhoto: Int)
+  func expandedText(cell: NewsfeedCell)
+}
+
+class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
   @IBOutlet weak var postTextLabel: UILabel!
   @IBOutlet weak var backgroundImageView: UIImageView!
   @IBOutlet weak var sourceImageView: DownloadableImageView!
@@ -36,6 +41,10 @@ class NewsfeedCell: UITableViewCell {
   var galleryImageViews: [DownloadableImageView] = []
   var galleryConstraints: [NSLayoutConstraint] = []
   
+  var delegate: NewsfeedCellDelegate? = nil
+  var index: Int = 0
+  var post: Post? = nil
+  
   override func awakeFromNib() {
     super.awakeFromNib()
     if let card = UIImage(named: "CardWithShadow") {
@@ -45,9 +54,16 @@ class NewsfeedCell: UITableViewCell {
         bottom: 31,
         right: 31))
     }
+    
+    if galleryScrollView != nil {
+      galleryScrollView.delegate = self
+    }
   }
   
-  func setupCell(post: Post, state: NewsfeedCellState) {
+  func setupCell(index: Int, post: Post, state: NewsfeedCellState) {
+    self.index = index
+    self.post = post
+    
     sourceNameLabel.text = post.source.name
     postDateLabel.text = post.date.toRelativeDateString()
     postTextLabel.text = post.text
@@ -59,48 +75,19 @@ class NewsfeedCell: UITableViewCell {
     
     sourceImageView.downloadImageFrom(link: post.source.photo, contentMode: UIView.ContentMode.scaleAspectFit)
     
-    singleImageView.isHidden = post.attachments.count > 1
-    singleImageView.cancelDownload()
-    singleImageView.image = nil
-    if singleAspectConstraint != nil {
-      singleImageView.removeConstraint(singleAspectConstraint!)
-    }
-    for constraint in singleImageView.constraints {
-      constraint.isActive = !singleImageView.isHidden
-    }
-    
-    galleryContainerView.isHidden = post.attachments.count <= 1
-    galleryPageControl.isHidden = post.attachments.count <= 1
-    gallerySeparatorView.isHidden = post.attachments.count <= 1
-    if galleryAspectConstraint != nil {
-      galleryScrollView.removeConstraint(galleryAspectConstraint!)
-    }
-    galleryScrollView.removeConstraints(galleryConstraints)
-    for imageView in galleryImageViews {
-      imageView.cancelDownload()
-      imageView.removeFromSuperview()
-    }
-    galleryImageViews = []
-    galleryConstraints = []
-    
-    
-    if post.attachments.count == 1 {
-      let photo = (post.attachments[0] as! Photo)
+    let isGallery = post.attachments.count > 1
+    if isGallery {
+      if galleryAspectConstraint != nil {
+        galleryScrollView.removeConstraint(galleryAspectConstraint!)
+      }
+      galleryScrollView.removeConstraints(galleryConstraints)
+      for imageView in galleryImageViews {
+        imageView.cancelDownload()
+        imageView.removeFromSuperview()
+      }
+      galleryImageViews = []
+      galleryConstraints = []
       
-      singleAspectConstraint = NSLayoutConstraint(
-        item: singleImageView,
-        attribute: NSLayoutConstraint.Attribute.width,
-        relatedBy: NSLayoutConstraint.Relation.equal,
-        toItem: singleImageView,
-        attribute: NSLayoutConstraint.Attribute.height,
-        multiplier: CGFloat(photo.maximumSize.width) / CGFloat(photo.maximumSize.height),
-        constant: 0.0)
-      //singleAspectConstraint?.priority = UILayoutPriority.defaultHigh
-      singleImageView.addConstraint(singleAspectConstraint!)
-      singleImageView.downloadImageFrom(link: photo.minimumSize.url,
-                                        contentMode: UIView.ContentMode.scaleToFill)
-    } else
-    if post.attachments.count > 1 {
       let photo = (post.attachments[0] as! Photo) // TODO: how to calculate aspect if it's different for each photo?
       
       galleryPageControl.numberOfPages = post.attachments.count
@@ -114,7 +101,7 @@ class NewsfeedCell: UITableViewCell {
         multiplier: CGFloat(photo.maximumSize.width) / CGFloat(photo.maximumSize.height),
         constant: 0.0)
       galleryScrollView.addConstraint(galleryAspectConstraint!)
-        
+      
       var previousImageView: UIImageView? = nil
       for photo in post.attachments as! [Photo] {
         let imageView = DownloadableImageView(frame: CGRect(x: 0.0, y: 0.0, width: 0.0, height: 0.0))
@@ -130,7 +117,7 @@ class NewsfeedCell: UITableViewCell {
         
         let constraintTop = previousImageView == nil ? NSLayoutConstraint(item: imageView, attribute: NSLayoutConstraint.Attribute.top, relatedBy: NSLayoutConstraint.Relation.equal, toItem: galleryContentView, attribute: NSLayoutConstraint.Attribute.top, multiplier: 1.0, constant: 0.0) :
           NSLayoutConstraint(item: imageView, attribute: NSLayoutConstraint.Attribute.centerY, relatedBy: NSLayoutConstraint.Relation.equal, toItem: previousImageView!, attribute: NSLayoutConstraint.Attribute.centerY, multiplier: 1.0, constant: 0.0)
-       galleryScrollView.addConstraint(constraintTop)
+        galleryScrollView.addConstraint(constraintTop)
         
         let constraintLeft = previousImageView == nil ?
           NSLayoutConstraint(item: imageView, attribute: NSLayoutConstraint.Attribute.leading, relatedBy: NSLayoutConstraint.Relation.equal, toItem: galleryContentView, attribute: NSLayoutConstraint.Attribute.leading, multiplier: 1.0, constant: 2.0) :
@@ -148,7 +135,44 @@ class NewsfeedCell: UITableViewCell {
       let constraintRight = NSLayoutConstraint(item: previousImageView!, attribute: NSLayoutConstraint.Attribute.trailing, relatedBy: NSLayoutConstraint.Relation.equal, toItem: galleryContentView, attribute: NSLayoutConstraint.Attribute.trailing, multiplier: 1.0, constant: 2.0)
       galleryScrollView.addConstraint(constraintRight)
       galleryConstraints.append(constraintRight)
+      
+      let x = CGFloat(state.selectedPhoto) * galleryScrollView.frame.size.width
+      galleryScrollView.setContentOffset(CGPoint(x: x, y: 0), animated: false)
+    } else {
+      singleImageView.cancelDownload()
+      singleImageView.image = nil
+      if singleAspectConstraint != nil {
+        singleImageView.removeConstraint(singleAspectConstraint!)
+      }
+      
+      if post.attachments.count == 1 {
+        let photo = (post.attachments[0] as! Photo)
+        
+        singleAspectConstraint = NSLayoutConstraint(
+          item: singleImageView,
+          attribute: NSLayoutConstraint.Attribute.width,
+          relatedBy: NSLayoutConstraint.Relation.equal,
+          toItem: singleImageView,
+          attribute: NSLayoutConstraint.Attribute.height,
+          multiplier: CGFloat(photo.maximumSize.width) / CGFloat(photo.maximumSize.height),
+          constant: 0.0)
+        //singleAspectConstraint?.priority = UILayoutPriority.defaultHigh
+        singleImageView.addConstraint(singleAspectConstraint!)
+        singleImageView.downloadImageFrom(link: photo.minimumSize.url,
+                                          contentMode: UIView.ContentMode.scaleToFill)
+      }
     }
   }
-
+  
+  @IBAction func pageChanged(_ sender: UIPageControl) {
+    let x = CGFloat(sender.currentPage) * galleryScrollView.frame.size.width
+    galleryScrollView.setContentOffset(CGPoint(x: x, y: 0), animated: true)
+    delegate?.selectedPhotoChanged(cell: self, selectedPhoto: sender.currentPage)
+  }
+  
+  func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    let value = scrollView.contentOffset.x / scrollView.frame.size.width
+    galleryPageControl.currentPage = Int(round(value))
+    delegate?.selectedPhotoChanged(cell: self, selectedPhoto: Int(round(value)))
+  }
 }
