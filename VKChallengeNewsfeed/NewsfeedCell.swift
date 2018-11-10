@@ -16,10 +16,14 @@ struct NewsfeedCellState {
 protocol NewsfeedCellDelegate {
   func selectedPhotoChanged(cell: NewsfeedCell, selectedPhoto: Int)
   func expandedText(cell: NewsfeedCell)
+  func tappedLink(link: String)
 }
 
 class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
-  @IBOutlet weak var postTextLabel: UILabel!
+  @IBOutlet weak var postTextLabel: PostTextLabel!
+  @IBOutlet weak var postTextConstraint: NSLayoutConstraint!
+  @IBOutlet weak var expandTextLabel: UILabel!
+  @IBOutlet weak var expandTextConstraint: NSLayoutConstraint!
   @IBOutlet weak var backgroundImageView: UIImageView!
   @IBOutlet weak var sourceImageView: DownloadableImageView!
   @IBOutlet weak var sourceNameLabel: UILabel!
@@ -58,6 +62,49 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
     if galleryScrollView != nil {
       galleryScrollView.delegate = self
     }
+  
+    expandTextLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(tapExpand)))
+    
+    postTextLabel.onCharacterTapped = characterTapped
+  }
+  
+  func characterTapped(label: UILabel, index: Int) {
+    let attrs = postTextLabel.attributedText?.attributes(at: index, effectiveRange: nil)
+    if let link = attrs?[NSAttributedString.Key.link] as? String {
+      delegate?.tappedLink(link: link)
+    }
+  }
+  
+  static var measuringLabel: PostTextLabel = PostTextLabel(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
+  static func calculateHeight(post: Post, state: NewsfeedCellState, width: CGFloat) -> CGFloat {
+    var height: CGFloat = 58.0 /* Above text */ + 44.0 /* Buttons below */ + 12.0 /* Spacing */
+    measuringLabel.parseText(text: post.text, query: nil)
+    measuringLabel.font = UIFont.boldSystemFont(ofSize: 15.0)
+    measuringLabel.numberOfLines = 0
+    measuringLabel.frame = CGRect(x: 0, y: 0, width: width - 24, height: 0)
+    let lines = measuringLabel.calculateMaxLines()
+    let isExpanded = state.isExpanded || lines <= 8
+    if isExpanded {
+      height += CGFloat(lines) * 22.0
+    } else {
+      height += 7 * 22.0
+    }
+    
+    let isGallery = post.attachments.count > 1
+    if isGallery {
+      let photo = (post.attachments[0] as! Photo)
+      height += CGFloat(photo.maximumSize.height) * (width / CGFloat(photo.maximumSize.width))
+      height += 6.0 + 39.0
+    } else
+    if post.attachments.count > 0 {
+      let photo = (post.attachments[0] as! Photo)
+      height += CGFloat(photo.maximumSize.height) * (width / CGFloat(photo.maximumSize.width))
+      height += 6.0 + 4.0
+    } else {
+      height += 4.0
+    }
+    
+    return height
   }
   
   func setupCell(index: Int, post: Post, state: NewsfeedCellState) {
@@ -66,7 +113,12 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
     
     sourceNameLabel.text = post.source.name
     postDateLabel.text = post.date.toRelativeDateString()
-    postTextLabel.text = post.text
+    postTextLabel.parseText(text: post.text, query: nil)
+    
+    let isExpanded = state.isExpanded || postTextLabel.calculateMaxLines() <= 8
+    expandTextLabel.isHidden = isExpanded
+    expandTextConstraint.constant = isExpanded ? 0.0 : 22.0
+    postTextLabel.numberOfLines = isExpanded ? 0 : 6
     
     likesCountLabel.text = post.likes.toShortString()
     commentsCountLabel.text = post.comments.toShortString()
@@ -74,6 +126,8 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
     viewsCountLabel.text = post.views.toShortString()
     
     sourceImageView.downloadImageFrom(link: post.source.photo, contentMode: UIView.ContentMode.scaleAspectFit)
+    
+    postTextConstraint.constant = post.attachments.count > 0 ? 6.0 : 0.0
     
     let isGallery = post.attachments.count > 1
     if isGallery {
@@ -174,5 +228,9 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
     let value = scrollView.contentOffset.x / scrollView.frame.size.width
     galleryPageControl.currentPage = Int(round(value))
     delegate?.selectedPhotoChanged(cell: self, selectedPhoto: Int(round(value)))
+  }
+  
+  @objc func tapExpand() {
+    delegate?.expandedText(cell: self)
   }
 }

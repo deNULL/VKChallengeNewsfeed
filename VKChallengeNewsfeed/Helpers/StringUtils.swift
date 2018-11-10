@@ -6,7 +6,7 @@
 //  Copyright © 2018 Denis Olshin. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 extension Int {
   func toShortString() -> String {
@@ -63,5 +63,30 @@ extension Int {
     } else {
       return String(day) + " " + months[month - 1] + " " + String(year)
     }
+  }
+}
+
+extension NSRange {
+  public init(_ range:Range<String.Index>) {
+    self.init(location: range.lowerBound.encodedOffset,
+              length: range.upperBound.encodedOffset -
+                range.lowerBound.encodedOffset) }
+}
+
+extension String {
+  subscript(_ range: NSRange) -> String {
+    return (self as NSString).substring(with: range)
+  }
+}
+
+
+extension UILabel {
+  func calculateMaxLines() -> Int {
+    let maxSize = CGSize(width: frame.size.width, height: CGFloat(Float.infinity))
+    let charSize = font.lineHeight
+    let text = (self.attributedText ?? NSAttributedString()) as NSAttributedString
+    let textSize = text.boundingRect(with: maxSize, options: .usesLineFragmentOrigin, context: nil)
+    let linesRoundedUp = Int(ceil(textSize.height / charSize))
+    return linesRoundedUp
   }
 }

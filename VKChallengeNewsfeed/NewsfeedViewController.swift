@@ -18,6 +18,7 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
   @IBOutlet weak var userpicImageView: DownloadableImageView!
   @IBOutlet weak var footerImageView: UIImageView!
+  @IBOutlet weak var searchTextField: UITextField!
   
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -84,35 +85,36 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   
   func initNewsfeed() {
     itemsCountLabel.isHidden = true
-    loadingIndicator.isHidden = false
+    loadingIndicator.startAnimating()
     API.getSelfAndNewsfeed { (user, list, error) in
       if user != nil && list != nil {
         self.me = user!
-        self.feed = list!
         DispatchQueue.main.async {
           self.userpicImageView.downloadImageFrom(link: user!.photo, contentMode: UIView.ContentMode.scaleToFill)
         }
-        self.updateCells(reset: true)
+        self.updateCells(list: list!, reset: true)
       } else {
         // TODO: add error handling
       }
     }
   }
   
-  func updateCells(reset: Bool) {
-    if reset {
-      cells = []
-    }
-    while cells.count < feed.items.count {
-      cells.append(NewsfeedCellState(isExpanded: false, selectedPhoto: 0))
-    }
-    
+  func updateCells(list: PostList, reset: Bool) {
     DispatchQueue.main.async {
+      self.feed = list
+      
+      if reset {
+        self.cells = []
+      }
+      while self.cells.count < self.feed.items.count {
+        self.cells.append(NewsfeedCellState(isExpanded: false, selectedPhoto: 0))
+      }
+      
       self.itemsCountLabel.text =
         String(self.feed.items.count) + " " +
         self.feed.items.count.toPluralString(["запись", "записи", "записей"]);
       self.itemsCountLabel.isHidden = false
-      self.loadingIndicator.isHidden = true
+      self.loadingIndicator.stopAnimating()
       
       self.footerImageView.isHidden = self.feed.items.count == 0
       
@@ -121,12 +123,14 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   }
   
   func loadMore() {
+    loadingIndicator.startAnimating()
+    itemsCountLabel.isHidden = true
     self.feed.loadNext(count: 30) { (error) in
       if let err = error {
         // TODO: error handling
       }
       // TODO: redraw
-      self.updateCells(reset: false)
+      self.updateCells(list: self.feed, reset: false)
     }
   }
 
@@ -141,6 +145,11 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
 
   
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    if indexPath.row >= feed.items.count {
+      let cell = tableView.dequeueReusableCell(withIdentifier: "Post", for: indexPath) as! NewsfeedCell
+      cell.delegate = self
+      return cell
+    }
     let post = feed.items[indexPath.row]
     let isGallery = post.attachments.count > 1
     let cell = tableView.dequeueReusableCell(withIdentifier: isGallery ? "PostGallery" : "Post", for: indexPath) as! NewsfeedCell
@@ -149,12 +158,46 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
     return cell
   }
   
+  /*
+  override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    return NewsfeedCell.calculateHeight(
+      post: feed.items[indexPath.row],
+      state: cells[indexPath.row],
+      width: tableView.bounds.width
+    )
+  }
+   */
+  override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+    if indexPath.row >= feed.items.count {
+      return 2.0
+    }
+    return NewsfeedCell.calculateHeight(
+      post: feed.items[indexPath.row],
+      state: cells[indexPath.row],
+      width: tableView.bounds.width
+    )
+  }
+  
   func selectedPhotoChanged(cell: NewsfeedCell, selectedPhoto: Int) {
     cells[cell.index].selectedPhoto = selectedPhoto
   }
   
   func expandedText(cell: NewsfeedCell) {
+    tableView.beginUpdates()
     cells[cell.index].isExpanded = true
+    tableView.reloadRows(at: [IndexPath(row: cell.index, section: 0)], with: UITableView.RowAnimation.automatic)
+    tableView.endUpdates()
+  }
+  
+  func tappedLink(link: String) {
+    if link.prefix(1) == "#" { // Hashtag: search for it
+      searchTextField.text = link
+      tableView.setContentOffset(.zero, animated: true)
+      // TODO: call search
+    } else {
+      guard let url = URL(string: link) else { return }
+      UIApplication.shared.openURL(url)
+    }
   }
   
   @IBAction func handleRefresh(_ sender: Any) {
@@ -163,7 +206,7 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
         DispatchQueue.main.async {
           self.refreshControl?.endRefreshing()
         }
-        self.updateCells(reset: true)
+        self.updateCells(list: self.feed, reset: true)
       }
     }
   }
@@ -173,6 +216,35 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
     app.statusBackdropView.alpha = scrollView.contentOffset.y / 40.0;
   }
   
+  override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    if Float(indexPath.row) >= Float(feed.items.count - 1) * 0.9 && feed.nextFrom != nil && !feed.isLoading {
+      loadMore()
+    }
+  }
+  
+  func searchFor(text: String?) {
+    itemsCountLabel.isHidden = true
+    loadingIndicator.startAnimating()
+    if let query = text {
+      if query.count > 0 {
+        API.searchNewsfeed(query: query, startFrom: nil, count: 30) { (list, error) in
+          if list != nil {
+            self.updateCells(list: list!, reset: true)
+          }
+        }
+      } else {
+        API.getNewsfeed(startFrom: nil, count: 30) { (list, error) in
+          if list != nil {
+            self.updateCells(list: list!, reset: true)
+          }
+        }
+      }
+    }
+  }
+  
+  @IBAction func changedQuery(_ sender: UITextField) {
+    searchFor(text: sender.text)
+  }
   /*
   // Override to support conditional editing of the table view.
   override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {

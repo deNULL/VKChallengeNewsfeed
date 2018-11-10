@@ -35,7 +35,7 @@ public class Photo {
       let width = sz["width"] as! Int
       
       maxw = max(maxw, width)
-      if CGFloat(width) >= screenWidth {
+      if CGFloat(width) >= screenWidth * 0.8 { // We can allow upscaling ~20% smaller images for better performance
         minw = min(minw, width)
       }
     }

@@ -82,7 +82,8 @@ class API {
     var params: [String: String] = [
       "q": query,
       "fields": "photo_50,photo_100",
-      "count": String(count)
+      "count": String(count),
+      "extended": "1"
     ]
     if startFrom != nil {
       params["start_from"] = startFrom!

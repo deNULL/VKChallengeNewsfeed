@@ -12,6 +12,7 @@ public class ItemList<ItemType> {
   var items: [ItemType]
   var nextFrom: String?
   var profiles: ProfileCollection
+  var isLoading: Bool = false
   
   init() {
     items = []
@@ -32,11 +33,13 @@ public class ItemList<ItemType> {
   // Reload in-place
   func reload(count: Int, onCompletion: @escaping (_ error: Error?) -> ()) {
     self.nextFrom = nil
+    self.isLoading = true
     loadItems(count: count) { (newList, error) in
       if let list = newList {
         self.items = list.items
         self.profiles = list.profiles
         self.nextFrom = list.nextFrom
+        self.isLoading = false
         onCompletion(nil)
       } else {
         onCompletion(error)
@@ -47,11 +50,13 @@ public class ItemList<ItemType> {
   // Load new items and append at the end
   func loadNext(count: Int, onCompletion: @escaping (_ error: Error?) -> ()) {
     if nextFrom != nil {
+      self.isLoading = true
       loadItems(count: count) { (newList, error) in
         if let list = newList {
           self.items.append(contentsOf: list.items)
           self.profiles.merge(other: list.profiles)
           self.nextFrom = list.nextFrom
+          self.isLoading = false
           onCompletion(nil)
         } else {
           onCompletion(error)

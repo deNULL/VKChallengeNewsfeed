@@ -20,9 +20,16 @@ public class Post {
   let attachments: [Any]
   
   init(json: [String: Any], profiles: ProfileCollection) {
-    id = json["post_id"] as! Int
-    let sourceId = json["source_id"] as! Int
-    source = profiles[sourceId]!
+    if let id = json["post_id"] as? Int {
+      self.id = id
+    } else {
+      id = json["id"] as! Int
+    }
+    if let sourceId = json["source_id"] as? Int {
+      source = profiles[sourceId]!
+    } else {
+      source = profiles[json["owner_id"] as! Int]!
+    }
     text = json["text"] as! String
     likes = (json["likes"] as! [String: Any])["count"] as! Int
     comments = (json["comments"] as! [String: Any])["count"] as! Int

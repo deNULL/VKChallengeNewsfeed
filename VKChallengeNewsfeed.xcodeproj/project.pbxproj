@@ -26,6 +26,7 @@
 		1B293FC321953E8000F7AA28 /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B293FC221953E8000F7AA28 /* GradientView.swift */; };
 		1B293FC52195499600F7AA28 /* NewsfeedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B293FC42195499600F7AA28 /* NewsfeedCell.swift */; };
 		1B293FC72195667700F7AA28 /* ImageUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B293FC62195667700F7AA28 /* ImageUtils.swift */; };
+		1B9EC48B2196A1F400DC52F2 /* PostTextLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B9EC48A2196A1F400DC52F2 /* PostTextLabel.swift */; };
 		1BD7ABB82196129F00E2B3E0 /* DownloadableImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BD7ABB72196129F00E2B3E0 /* DownloadableImageView.swift */; };
 		1BD7ABBB2196146000E2B3E0 /* StringUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BD7ABBA2196146000E2B3E0 /* StringUtils.swift */; };
 		52CC0638AE915FDBF97F6138 /* Pods_VKChallengeNewsfeed.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4134F2182D300A05EE0D7A07 /* Pods_VKChallengeNewsfeed.framework */; };
@@ -54,6 +55,7 @@
 		1B293FC221953E8000F7AA28 /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		1B293FC42195499600F7AA28 /* NewsfeedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsfeedCell.swift; sourceTree = "<group>"; };
 		1B293FC62195667700F7AA28 /* ImageUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtils.swift; sourceTree = "<group>"; };
+		1B9EC48A2196A1F400DC52F2 /* PostTextLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostTextLabel.swift; sourceTree = "<group>"; };
 		1BD7ABB72196129F00E2B3E0 /* DownloadableImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadableImageView.swift; sourceTree = "<group>"; };
 		1BD7ABBA2196146000E2B3E0 /* StringUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringUtils.swift; sourceTree = "<group>"; };
 		4134F2182D300A05EE0D7A07 /* Pods_VKChallengeNewsfeed.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_VKChallengeNewsfeed.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -130,6 +132,7 @@
 				1B293FBF21953D3E00F7AA28 /* RoundedImageView.swift */,
 				1B293FC221953E8000F7AA28 /* GradientView.swift */,
 				1BD7ABB72196129F00E2B3E0 /* DownloadableImageView.swift */,
+				1B9EC48A2196A1F400DC52F2 /* PostTextLabel.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -286,6 +289,7 @@
 				1B293FC321953E8000F7AA28 /* GradientView.swift in Sources */,
 				1B293FAE219507A300F7AA28 /* User.swift in Sources */,
 				1B293FC021953D3E00F7AA28 /* RoundedImageView.swift in Sources */,
+				1B9EC48B2196A1F400DC52F2 /* PostTextLabel.swift in Sources */,
 				1B293FA72194F44A00F7AA28 /* NewsfeedViewController.swift in Sources */,
 				1B293FB82195081200F7AA28 /* Post.swift in Sources */,
 				1BD7ABB82196129F00E2B3E0 /* DownloadableImageView.swift in Sources */,
