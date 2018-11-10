@@ -24,10 +24,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     statusBackdropView = UIView(frame: application.statusBarFrame)
     statusBackdropView.layer.shadowColor = UIColor.black.cgColor
-    statusBackdropView.layer.shadowOffset = CGSize(width: 0.0, height: 4.0)
+    statusBackdropView.layer.shadowOffset = CGSize(width: 0.0, height: 2.0)
     statusBackdropView.layer.masksToBounds = false
-    statusBackdropView.layer.shadowRadius = 4.0
-    statusBackdropView.layer.shadowOpacity = 0.25
+    statusBackdropView.layer.shadowRadius = 9.0
+    statusBackdropView.layer.shadowOpacity = 0.1
     statusBackdropView.backgroundColor = .white
     statusBackdropView.alpha = 0.0
     window.addSubview(statusBackdropView)

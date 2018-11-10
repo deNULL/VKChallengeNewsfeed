@@ -93,13 +93,13 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
       sourceImageView.downloadImageFrom(link: post.source.photo, contentMode: UIView.ContentMode.scaleAspectFit)
       
       sourceNameLabel.text = post.source.name
-      sourceNameLabel.frame = CGRect(x: 70, y: 14, width: width - 90, height: 17)
+      sourceNameLabel.frame = CGRect(x: 66, y: 13, width: width - 90, height: 17)
       
       postDateLabel.text = post.date.toRelativeDateString()
-      postDateLabel.frame = CGRect(x: 70, y: 32, width: width - 90, height: 14.33)
+      postDateLabel.frame = CGRect(x: 66, y: 31, width: width - 90, height: 14.33)
     }
     
-    y += 58
+    y += 57.5
     
     postTextLabel.parseText(text: post.text, query: query, dirty: false)
     let postTextFullHeight = postTextLabel.calculateHeight(width: width - 40)
@@ -112,23 +112,24 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
       postTextLabel.frame = CGRect(x: 20, y: y, width: width - 40, height: postTextHeight)
     }
     
-    y += postTextHeight + 6
+    y += postTextHeight
     
     if !measureOnly {
       expandTextLabel.isHidden = isExpanded
       if !isExpanded {
-        expandTextLabel.frame = CGRect(x: 20, y: y - 22, width: expandTextLabel.frame.width, height: 18)
+        expandTextLabel.frame = CGRect(x: 20, y: y, width: expandTextLabel.frame.width, height: 18)
       }
     }
     
     if !isExpanded {
-      y += 16
+      y += 18
     }
     
+    y += 10.5
     
-    if post.attachments.count > 0 {
+    if post.attachments.count > 0 { // Swipeable collection of photos
       let photo = (post.attachments[0] as! Photo)
-      let aspect = CGFloat(photo.maximumSize.width) / CGFloat(photo.maximumSize.height)
+      let aspect = max(0.4, min(CGFloat(photo.maximumSize.width) / CGFloat(photo.maximumSize.height), 3.0))
       
       if post.attachments.count > 1 {
         for imageView in galleryImageViews {
@@ -155,9 +156,12 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
             x += 4 + (width - 40)
           }
           galleryScrollView.contentSize = CGSize(width: x - 2, height: height)
+          
+          x = CGFloat(state.selectedPhoto) * (4 + (width - 40))
+          galleryScrollView.setContentOffset(CGPoint(x: x, y: 0), animated: false)
         }
         
-        y += height
+        y += height + 1
         
         if !measureOnly {
           galleryPageControl.frame = CGRect(x: 8, y: y, width: width - 16, height: 37)
@@ -165,17 +169,18 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
           galleryPageControl.currentPage = state.selectedPhoto
         }
         
-        y += 37
+        y += 38
         
         if !measureOnly {
-          gallerySeparatorView.frame = CGRect(x: 20, y: y, width: width - 40, height: 1)
+          gallerySeparatorView.frame = CGRect(x: 20, y: y - 0.5, width: width - 40, height: 0.5)
         }
         
         y += 10
-      } else {
+      } else { // Single image
         if !measureOnly {
           singleImageView.cancelDownload()
           singleImageView.image = nil
+          singleImageView.isHidden = false
         }
         
         let height = (width - 16) / aspect
@@ -187,7 +192,7 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
         
         y += height + 14
       }
-    } else {
+    } else { // No supported attachments, text only
       if !measureOnly {
         singleImageView.cancelDownload()
         singleImageView.image = nil
@@ -199,11 +204,11 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
       likesImageView.frame = CGRect(x: 24, y: y, width: 24, height: 24)
       likesCountLabel.frame = CGRect(x: 53, y: y + 3, width: 50, height: 17)
       likesCountLabel.text = post.likes.toShortString()
-      commentsImageView.frame = CGRect(x: 110, y: y, width: 24, height: 24)
-      commentsCountLabel.frame = CGRect(x: 139, y: y + 3, width: 50, height: 17)
+      commentsImageView.frame = CGRect(x: 108, y: y, width: 24, height: 24)
+      commentsCountLabel.frame = CGRect(x: 137, y: y + 3, width: 50, height: 17)
       commentsCountLabel.text = post.comments.toShortString()
-      repostsImageView.frame = CGRect(x: 195, y: y, width: 24, height: 24)
-      repostsCountLabel.frame = CGRect(x: 224, y: y + 3, width: 50, height: 17)
+      repostsImageView.frame = CGRect(x: 192, y: y, width: 24, height: 24)
+      repostsCountLabel.frame = CGRect(x: 221, y: y + 3, width: 50, height: 17)
       repostsCountLabel.text = post.reposts.toShortString()
       viewsImageView.frame = CGRect(x: width - 73, y: y + 2, width: 20, height: 20)
       viewsCountLabel.frame = CGRect(x: width - 51, y: y + 6, width: 43, height: 11)

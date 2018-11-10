@@ -13,9 +13,6 @@ class PostLayoutManager: NSLayoutManager {
     if let foregroundColor = attributes[NSAttributedString.Key.foregroundColor] as? UIColor {
       graphicsContext.setFillColor(foregroundColor.cgColor)
     }
-    if let backgroundColor = attributes[NSAttributedString.Key.backgroundColor] as? UIColor {
-      
-    }
     super.showCGGlyphs(glyphs, positions: positions, count: glyphCount, font: font, matrix: textMatrix, attributes: attributes, in: graphicsContext)
   }
   
@@ -34,7 +31,7 @@ class PostLayoutManager: NSLayoutManager {
         
         //UIBezierPath with rounded
         let path = UIBezierPath(roundedRect:
-          CGRect(x: rect.minX - 4, y: rect.minY - 1, width: rect.width + 8, height: 22), cornerRadius: 5)
+          CGRect(x: rect.minX - 4, y: rect.minY - 1, width: rect.width + 8, height: 22), cornerRadius: 4)
         path.fill()
         context?.restoreGState()
       }
@@ -63,6 +60,7 @@ class PostTextLabel: UILabel {
   let tapGesture = UITapGestureRecognizer()
   override var attributedText: NSAttributedString? {
     didSet {
+      textStorage.removeLayoutManager(layoutManager)
       if let attributedText = attributedText {
         textStorage = NSTextStorage(attributedString: attributedText)
       } else {
@@ -104,7 +102,7 @@ class PostTextLabel: UILabel {
   
   func parseText(text: String, query: String?, dirty: Bool) {
     let paragraphStyle = NSMutableParagraphStyle()
-    paragraphStyle.lineSpacing = 22.0 - 17.25
+    paragraphStyle.lineSpacing = 4.0
     
     var str: String = text
     let regex = try? NSRegularExpression(pattern: "\\[([^\\]\\|]+)\\|([^\\]\\|]+)\\]")
@@ -199,25 +197,12 @@ class PostTextLabel: UILabel {
     textContainer.size = bounds.size
   }
   
-  func textOffsetForGlyphRange(glyphRange: NSRange) -> CGPoint {
-    var textOffset = CGPoint.zero
-    
-    let textBounds = layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer)
-    let paddingHeight = (bounds.size.height - textBounds.size.height) / 2.0
-    if paddingHeight > 0 {
-      //textOffset.y = paddingHeight
-    }
-  
-    return textOffset;
-  }
-  
   override func drawText(in rect: CGRect) {
     // Calculate the offset of the text in the view
-    let glyphRange = layoutManager.glyphRange(forBoundingRectWithoutAdditionalLayout: rect, in: textContainer)
-    let textOffset = textOffsetForGlyphRange(glyphRange: glyphRange)
+    let glyphRange = layoutManager.glyphRange(for: textContainer)
     
-    layoutManager.drawBackground(forGlyphRange: glyphRange, at: textOffset)
-    layoutManager.drawGlyphs(forGlyphRange: glyphRange, at: textOffset)
+    layoutManager.drawBackground(forGlyphRange: glyphRange, at: .zero)
+    layoutManager.drawGlyphs(forGlyphRange: glyphRange, at: .zero)
   }
   
   @objc func labelTapped(_ gesture: UITapGestureRecognizer) {
