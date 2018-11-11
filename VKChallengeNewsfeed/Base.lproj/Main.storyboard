@@ -13,7 +13,7 @@
         <scene sceneID="E59-qb-mak">
             <objects>
                 <tableViewController id="ugz-kn-ohb" customClass="NewsfeedViewController" customModule="VKChallengeNewsfeed" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" opaque="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="Dfp-SL-88K">
+                    <tableView key="view" opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="Dfp-SL-88K">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -30,9 +30,10 @@
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                             <nil key="textColor"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                            <textInputTraits key="textInputTraits"/>
+                                            <textInputTraits key="textInputTraits" returnKeyType="search" enablesReturnKeyAutomatically="YES"/>
                                             <connections>
                                                 <action selector="changedQuery:" destination="ugz-kn-ohb" eventType="editingChanged" id="hse-vG-b02"/>
+                                                <action selector="searchButtonTapped:" destination="ugz-kn-ohb" eventType="primaryActionTriggered" id="QuC-Mx-6SL"/>
                                             </connections>
                                         </textField>
                                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="Search_16" translatesAutoresizingMaskIntoConstraints="NO" id="WOy-Bo-W1f">

@@ -13,31 +13,27 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   static let LOAD_ONLY_WHEN_STOPPED: Bool = true
   static let LOAD_AT_PERCENT: CGFloat = 0.8
   
+  @IBOutlet weak var searchContainer: RoundedView!
+  @IBOutlet weak var searchTextField: UITextField!
+  @IBOutlet weak var userpicImageView: DownloadableImageView!
+  @IBOutlet weak var footerImageView: UIImageView!
+  @IBOutlet weak var itemsCountLabel: UILabel!
+  @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
+  
   var me: User? = nil
   var feed: PostList = PostList()
   var cells: [NewsfeedCellState] = []
   var isSearching: Bool = false
   var lastContentOffset: CGFloat = 0.0
   var lastScrollDelta: CGFloat = 1.0
-  @IBOutlet weak var itemsCountLabel: UILabel!
-  @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
-  @IBOutlet weak var userpicImageView: DownloadableImageView!
-  @IBOutlet weak var footerImageView: UIImageView!
-  @IBOutlet weak var searchTextField: UITextField!
-  @IBOutlet weak var searchContainer: RoundedView!
   
   override func viewDidLoad() {
     super.viewDidLoad()
     
+    // Update VK App Id here
     let sdkInstance = VKSdk.initialize(withAppId: "6746103")
     sdkInstance?.register(self)
     sdkInstance?.uiDelegate = self
-    
-    // Uncomment the following line to preserve selection between presentations
-    // self.clearsSelectionOnViewWillAppear = false
-
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem
   }
   
   override func viewDidAppear(_ animated: Bool) {
@@ -47,7 +43,6 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
     searchTextField.attributedPlaceholder =
       NSAttributedString(string: "Поиск",
                          attributes: [NSAttributedString.Key.foregroundColor: UIColor(red:0.51, green:0.55, blue:0.60, alpha:1.0)])
- 
     
     VKSdk.wakeUpSession(["friends", "wall"]) { (state, error) in
       if (state == VKAuthorizationState.authorized) {
@@ -59,15 +54,16 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
     }
   }
   
+  // VK SDK Delegate methods
+  
   func vkSdkShouldPresent(_ controller: UIViewController!) {
     present(controller, animated: true, completion: nil)
   }
   
   func vkSdkNeedCaptchaEnter(_ captchaError: VKError!) {
-    // TODO: more informative alert, generic error method
     let alert = UIAlertController(title: "Ошибка", message: "Капча введена неверно", preferredStyle: UIAlertController.Style.alert)
     alert.addAction(UIAlertAction(title: "OK", style: .default))
-    self.present(alert, animated: true, completion: nil)
+    present(alert, animated: true, completion: nil)
   }
   
   func vkSdkAccessAuthorizationFinished(with result: VKAuthorizationResult!) {
@@ -75,7 +71,6 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
       API.token = token.accessToken
       initNewsfeed()
     } else {
-      // TODO: more informative alert, generic error method
       let alert = UIAlertController(title: "Ошибка", message: "Не удалось войти", preferredStyle: UIAlertController.Style.alert)
       alert.addAction(UIAlertAction(title: "OK", style: .default))
       self.present(alert, animated: true, completion: nil)
@@ -83,7 +78,6 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   }
   
   func vkSdkUserAuthorizationFailed() {
-    // TODO: more informative alert, generic error method
     let alert = UIAlertController(title: "Ошибка", message: "Не удалось войти", preferredStyle: UIAlertController.Style.alert)
     alert.addAction(UIAlertAction(title: "OK", style: .default))
     self.present(alert, animated: true, completion: nil)
@@ -150,15 +144,11 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
     loadingIndicator.startAnimating()
     itemsCountLabel.isHidden = true
     self.feed.loadNext(count: 30) { (error) in
-      if let err = error {
-        // TODO: error handling
-      }
       // TODO: redraw
       self.updateCells(list: self.feed, reset: false)
     }
   }
 
-  // MARK: - Table view data source
   override func numberOfSections(in tableView: UITableView) -> Int {
     return 1
   }
@@ -166,7 +156,6 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
     return feed.items.count
   }
-
   
   override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     if indexPath.row >= feed.items.count {
@@ -225,10 +214,6 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
     cells[cell.index].isExpanded = true
     tableView.reloadRows(at: [IndexPath(row: cell.index, section: 0)], with: UITableView.RowAnimation.automatic)
     tableView.endUpdates()
-    
-    //UIView.beginAnimations(nil, context: nil)
-    //cell.updateLayout(state: cells[cell.index], width: tableView.frame.width)
-    //UIView.commitAnimations()
   }
   
   func tappedLink(link: String) {
@@ -376,5 +361,10 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
       UIView.commitAnimations()
     }
     searchFor(text: sender.text)
+  }
+  
+  @IBAction func searchButtonTapped(_ sender: UITextField) {
+    changedQuery(sender)
+    sender.resignFirstResponder()
   }
 }
