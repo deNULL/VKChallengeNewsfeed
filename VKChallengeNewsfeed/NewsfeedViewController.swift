@@ -10,11 +10,15 @@ import UIKit
 import VK_ios_sdk
 
 class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDelegate, NewsfeedCellDelegate {
+  static let LOAD_ONLY_WHEN_STOPPED: Bool = true
+  static let LOAD_AT_PERCENT: CGFloat = 0.8
   
   var me: User? = nil
   var feed: PostList = PostList()
   var cells: [NewsfeedCellState] = []
   var isSearching: Bool = false
+  var lastContentOffset: CGFloat = 0.0
+  var lastScrollDelta: CGFloat = 1.0
   @IBOutlet weak var itemsCountLabel: UILabel!
   @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
   @IBOutlet weak var userpicImageView: DownloadableImageView!
@@ -101,7 +105,7 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
       if user != nil && list != nil {
         self.me = user!
         DispatchQueue.main.async {
-          self.userpicImageView.downloadImageFrom(link: user!.photo, contentMode: UIView.ContentMode.scaleToFill)
+          self.userpicImageView.downloadImageFrom(link: user!.photo, scaledToWidth: 36, contentMode: UIView.ContentMode.scaleToFill)
         }
         self.updateCells(list: list!, reset: true)
       } else {
@@ -112,6 +116,9 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   
   func updateCells(list: PostList, reset: Bool) {
     DispatchQueue.main.async {
+      if reset {
+        ImageManager.instance.drop()
+      }
       self.feed = list
       
       if reset {
@@ -130,6 +137,11 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
       self.footerImageView.isHidden = self.feed.items.count == 0
       
       self.tableView.reloadData()
+      self.lastScrollDelta = 1.0
+      
+      if !self.searchTextField.isFirstResponder {
+        self.prefetchNextItems(chunkSize: 5, maxAllowedLoad: 10)
+      }
     }
   }
   
@@ -195,13 +207,16 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   }
   
   func selectedPhotoChanged(cell: NewsfeedCell, selectedPhoto: Int) {
-    tableView.beginUpdates()
     cells[cell.index].selectedPhoto = selectedPhoto
-    tableView.endUpdates()
     
-    UIView.beginAnimations(nil, context: nil)
-    cell.updateLayout(state: cells[cell.index], width: tableView.frame.width)
-    UIView.commitAnimations()
+    if NewsfeedCell.USE_DYNAMIC_CAROUSEL_HEIGHT {
+      tableView.beginUpdates()
+      tableView.endUpdates()
+    
+      UIView.beginAnimations(nil, context: nil)
+      cell.updateLayout(state: cells[cell.index], width: tableView.frame.width)
+      UIView.commitAnimations()
+    }
   }
   
   func expandedText(cell: NewsfeedCell) {
@@ -220,7 +235,7 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
       let hash = String(link.split(separator: "@")[0])
       searchTextField.text = link
       searchTextField.becomeFirstResponder()
-      //tableView.setContentOffset(.zero, animated: true)
+      tableView.setContentOffset(CGPoint(x: 0, y: -20), animated: true)
       
       searchFor(text: hash)
     } else {
@@ -243,15 +258,68 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   override func scrollViewDidScroll(_ scrollView: UIScrollView) {
     let app = UIApplication.shared.delegate as! AppDelegate
     app.statusBackdropView.alpha = scrollView.contentOffset.y / 40.0;
+    
+    lastScrollDelta = scrollView.contentOffset.y - lastContentOffset
+    lastContentOffset = scrollView.contentOffset.y
+    prefetchNextItems(chunkSize: 3, maxAllowedLoad: 6)
+    possiblyLoadMore(isStopped: false)
   }
   
   override func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
     searchTextField.resignFirstResponder()
   }
   
-  override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-    if Float(indexPath.row) >= Float(feed.items.count - 1) * 0.9 && feed.nextFrom != nil && !feed.isLoading {
-      loadMore()
+  override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+    if decelerate {
+      prefetchNextItems(chunkSize: 4, maxAllowedLoad: 8)
+    } else {
+      prefetchNextItems(chunkSize: 5, maxAllowedLoad: 10)
+      possiblyLoadMore(isStopped: true)
+    }
+  }
+  
+  override func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    prefetchNextItems(chunkSize: 5, maxAllowedLoad: 10)
+    possiblyLoadMore(isStopped: true)
+  }
+  
+  func possiblyLoadMore(isStopped: Bool) {
+    if feed.nextFrom == nil || feed.isLoading {
+      return
+    }
+    
+    if let rows = tableView.indexPathsForVisibleRows {
+      if let last = rows.last {
+        if last.row >= feed.items.count - 1 {
+          loadMore()
+        } else
+        if (!NewsfeedViewController.LOAD_ONLY_WHEN_STOPPED || isStopped) &&
+          CGFloat(last.row) >= CGFloat(feed.items.count - 1) * NewsfeedViewController.LOAD_AT_PERCENT {
+          loadMore()
+        }
+      }
+    }
+  }
+  
+  func prefetchNextItems(chunkSize: Int, maxAllowedLoad: Int) {
+    if let rows = tableView.indexPathsForVisibleRows {
+      if lastScrollDelta >= 0 {
+        if let last = rows.last {
+          for index in 1...chunkSize {
+            if last.row + index < feed.items.count && ImageManager.instance.currentLoad() < maxAllowedLoad {
+              NewsfeedCell.prefetchImages(forPost: feed.items[last.row + index], width: tableView.frame.width)
+            }
+          }
+        }
+      } else {
+        if let first = rows.first {
+          for index in 1...chunkSize {
+            if first.row - index >= 0 && ImageManager.instance.currentLoad() < maxAllowedLoad {
+              NewsfeedCell.prefetchImages(forPost: feed.items[first.row - index], width: tableView.frame.width)
+            }
+          }
+        }
+      }
     }
   }
   
@@ -308,48 +376,4 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
     }
     searchFor(text: sender.text)
   }
-  /*
-  // Override to support conditional editing of the table view.
-  override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-      // Return false if you do not want the specified item to be editable.
-      return true
-  }
-  */
-
-  /*
-  // Override to support editing the table view.
-  override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-      if editingStyle == .delete {
-          // Delete the row from the data source
-          tableView.deleteRows(at: [indexPath], with: .fade)
-      } else if editingStyle == .insert {
-          // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-      }
-  }
-  */
-
-  /*
-  // Override to support rearranging the table view.
-  override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-  }
-  */
-
-  /*
-  // Override to support conditional rearranging of the table view.
-  override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-      // Return false if you do not want the item to be re-orderable.
-      return true
-  }
-  */
-
-  /*
-  // MARK: - Navigation
-
-  // In a storyboard-based application, you will often want to do a little preparation before navigation
-  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-      // Get the new view controller using segue.destination.
-      // Pass the selected object to the new view controller.
-  }
-  */
 }

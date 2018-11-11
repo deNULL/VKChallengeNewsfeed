@@ -20,6 +20,9 @@ protocol NewsfeedCellDelegate {
 }
 
 class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
+  static let USE_DYNAMIC_CAROUSEL_HEIGHT: Bool = false
+  static let ALLOW_CAROUSEL_CLIPPING: Bool = false
+  
   @IBOutlet weak var backgroundImageView: UIImageView!
   @IBOutlet weak var sourceImageView: DownloadableImageView!
   @IBOutlet weak var sourceNameLabel: UILabel!
@@ -29,7 +32,6 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
   @IBOutlet weak var singleImageView: DownloadableImageView!
   @IBOutlet weak var galleryContainerView: UIView!
   @IBOutlet weak var galleryScrollView: UIScrollView!
-  @IBOutlet weak var galleryContentView: UIView!
   @IBOutlet weak var galleryPageControl: UIPageControl!
   @IBOutlet weak var gallerySeparatorView: UIView!
   @IBOutlet weak var likesImageView: UIImageView!
@@ -83,6 +85,15 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
     return measuringInstance.setupCell(index: index, post: post, state: state, query: nil, width: width, measureOnly: true, stateOnly: false)
   }
   
+  static func prefetchImages(forPost post: Post, width: CGFloat) {
+    ImageManager.instance.prefetch(src: post.source.photo, scaledToWidth: 36)
+    if let attachments = post.attachments as? [Photo] {
+      if attachments.count > 0 {
+        ImageManager.instance.prefetch(src: attachments[0].minimumSize.url, scaledToWidth: width - 40)
+      }
+    }
+  }
+  
   func updateLayout(state: NewsfeedCellState, width: CGFloat) {
     setupCell(index: index, post: post!, state: state, query: query, width: width, measureOnly: false, stateOnly: true)
   }
@@ -98,7 +109,7 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
     var y: CGFloat = 0
   
     if !measureOnly && !stateOnly {
-      sourceImageView.downloadImageFrom(link: post.source.photo, contentMode: UIView.ContentMode.scaleAspectFit)
+      sourceImageView.downloadImageFrom(link: post.source.photo, scaledToWidth: 36, contentMode: .scaleAspectFit)
       
       sourceNameLabel.text = post.source.name
       sourceNameLabel.frame = CGRect(x: 66, y: 13, width: width - 90, height: 17)
@@ -150,16 +161,27 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
     
     if post.attachments.count > 0 { // Swipeable collection of photos
       let photo = (post.attachments[state.selectedPhoto] as! Photo)
-      let aspect = max(0.4, min(CGFloat(photo.maximumSize.width) / CGFloat(photo.maximumSize.height), 3.0))
+      var aspect = max(0.4, min(CGFloat(photo.maximumSize.width) / CGFloat(photo.maximumSize.height), 3.0))
+      
+      
       
       if post.attachments.count > 1 {
         if !stateOnly {
           for imageView in galleryImageViews {
-            imageView.cancelDownload()
+            ImageManager.instance.cancel(view: imageView)
             imageView.removeFromSuperview()
           }
           galleryImageViews = []
           galleryPendingUrls = []
+        }
+        
+        // Calculate average aspect ratio
+        if !NewsfeedCell.USE_DYNAMIC_CAROUSEL_HEIGHT {
+          aspect = 0.0
+          for photo in post.attachments as! [Photo] {
+            aspect += log2(max(0.4, min(CGFloat(photo.maximumSize.width) / CGFloat(photo.maximumSize.height), 3.0)))
+          }
+          aspect = pow(2.0, aspect / CGFloat(post.attachments.count))
         }
         
         // TODO: how to calculate aspect if it's different for each photo?
@@ -175,7 +197,7 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
             if !stateOnly {
               let imageView = DownloadableImageView(frame: frame)
               if abs(i - state.selectedPhoto) <= 1 { // First, load only closest photos, all other are not visible anyway
-                imageView.downloadImageFrom(link: photo.minimumSize.url, contentMode: .scaleAspectFill)
+                imageView.downloadImageFrom(link: photo.minimumSize.url, scaledToWidth: width - 40, contentMode: NewsfeedCell.ALLOW_CAROUSEL_CLIPPING ? .scaleAspectFill : .scaleAspectFit)
                 galleryPendingUrls.append(nil)
               } else { // Store url to load later
                 galleryPendingUrls.append(photo.minimumSize.url)
@@ -214,21 +236,21 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
         y += 10
       } else { // Single image
         if !measureOnly && !stateOnly {
-          singleImageView.cancelDownload()
+          //ImageManager.instance.cancel(view: singleImageView)
           singleImageView.isHidden = false
         }
         
         let height = (width - 16) / aspect
         if !measureOnly {
           singleImageView.frame = CGRect(x: 8, y: y, width: width - 16, height: height)
-          singleImageView.downloadImageFrom(link: photo.minimumSize.url, contentMode: .scaleAspectFill)
+          singleImageView.downloadImageFrom(link: photo.minimumSize.url, scaledToWidth: width - 16, contentMode: .scaleAspectFill)
         }
         
         y += height + 14
       }
     } else { // No supported attachments, text only
       if !measureOnly && !stateOnly {
-        singleImageView.cancelDownload()
+        ImageManager.instance.cancel(view: singleImageView)
         singleImageView.image = nil
         singleImageView.isHidden = true
       }
@@ -271,7 +293,7 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
     for offs in -1...1 {
       let page = galleryPageControl.currentPage + offs
       if page >= 0 && page < galleryPendingUrls.count && galleryPendingUrls[page] != nil {
-        galleryImageViews[page].downloadImageFrom(link: galleryPendingUrls[page]!, contentMode: .scaleAspectFill)
+        galleryImageViews[page].downloadImageFrom(link: galleryPendingUrls[page]!, scaledToWidth: scrollView.frame.size.width - 4, contentMode: NewsfeedCell.ALLOW_CAROUSEL_CLIPPING ? .scaleAspectFill : .scaleAspectFit)
         galleryPendingUrls[page] = nil
       }
     }

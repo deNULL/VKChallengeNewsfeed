@@ -39,9 +39,9 @@ class PostLayoutManager: NSLayoutManager {
     })
   }
   
-  /*override func drawGlyphs(forGlyphRange glyphsToShow: NSRange, at origin: CGPoint) {
-    
-  }*/
+  override func drawGlyphs(forGlyphRange glyphsToShow: NSRange, at origin: CGPoint) {
+    super.drawGlyphs(forGlyphRange: glyphsToShow, at: origin)
+  }
   
   override func drawUnderline(forGlyphRange glyphRange: NSRange, underlineType underlineVal: NSUnderlineStyle, baselineOffset: CGFloat, lineFragmentRect lineRect: CGRect, lineFragmentGlyphRange lineGlyphRange: NSRange, containerOrigin: CGPoint) {
     // No underline
@@ -49,6 +49,7 @@ class PostLayoutManager: NSLayoutManager {
 }
 
 class PostTextLabel: UILabel {
+  static var parsedTexts: [String: NSAttributedString] = [:]
   let layoutManager = PostLayoutManager()
   let textContainer = NSTextContainer(size: CGSize.zero)
   var textStorage = NSTextStorage() {
@@ -102,15 +103,22 @@ class PostTextLabel: UILabel {
   }
   
   func parseText(text: String, query: String?, dirty: Bool) {
+    if query == nil {
+      if let result = PostTextLabel.parsedTexts[text] {
+        attributedText = result
+        return
+      }
+    }
+    
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.lineSpacing = 4.0
     
     var str: String = text
-    let regex = try? NSRegularExpression(pattern: "\\[([^\\]\\|]+)\\|([^\\]\\|]+)\\]")
     
-    if dirty {
+    let regex = try? NSRegularExpression(pattern: "\\[([^\\]\\|]+)\\|([^\\]\\|]+)\\]")
+    if dirty && query != nil {
       // In case we are just calculating text height, there's no need for coloring
-      str = (regex?.stringByReplacingMatches(in: text, options: [], range: NSRange(location: 0, length: text.utf16.count), withTemplate: "$2"))!
+      str = (regex?.stringByReplacingMatches(in: str, options: [], range: NSRange(location: 0, length: str.utf16.count), withTemplate: "$2"))!
       let result = NSMutableAttributedString(string: str, attributes: [
         NSAttributedString.Key.font: UIFont.systemFont(ofSize: 15.0),
         NSAttributedString.Key.paragraphStyle: paragraphStyle
@@ -119,7 +127,10 @@ class PostTextLabel: UILabel {
       return
     }
     
-    var matches = regex?.matches(in: text, options: [], range: NSRange(location: 0, length: text.utf16.count))
+    // This is required to fix weird bug with NSLayoutManager where he eats an empty line after emoji
+    str = str.replacingOccurrences(of: "\n\n", with: "\n \n", options: .literal, range: nil)
+    
+    var matches = regex?.matches(in: str, options: [], range: NSRange(location: 0, length: str.utf16.count))
     var links: [NSRange: String] = [:]
     if matches != nil {
       var diff = 0
@@ -134,7 +145,7 @@ class PostTextLabel: UILabel {
         links[range] = "https://vk.com/" + str[link]
       }
       
-      str = (regex?.stringByReplacingMatches(in: text, options: [], range: NSRange(location: 0, length: text.utf16.count), withTemplate: "$2"))!
+      str = (regex?.stringByReplacingMatches(in: str, options: [], range: NSRange(location: 0, length: str.utf16.count), withTemplate: "$2"))!
     }
     
     let detector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
@@ -159,12 +170,26 @@ class PostTextLabel: UILabel {
       NSAttributedString.Key.paragraphStyle: paragraphStyle
     ])
     
+    let linkParagraphStyle = NSMutableParagraphStyle()
+    linkParagraphStyle.lineSpacing = 4.0
+    linkParagraphStyle.lineBreakMode = .byTruncatingTail
     for (range, link) in links {
       result.addAttributes([
         .link: link,
-        NSAttributedString.Key.foregroundColor: UIColor(red: 0.32, green: 0.55, blue: 0.80, alpha: 1.0),
-        NSAttributedString.Key.underlineStyle: 0
-        ], range: range)
+        .foregroundColor: UIColor(red: 0.32, green: 0.55, blue: 0.80, alpha: 1.0),
+        .underlineStyle: 0,
+        .paragraphStyle: linkParagraphStyle
+      ], range: range)
+      if range.upperBound > str.utf16.count {
+        print("Invalid range!")
+        print("Source: " + text)
+        print("Result: " + str)
+        print("[" + String(str.utf16.count) + "]")
+        print("Range:")
+        print(range)
+        print("Link:")
+        print(link)
+      }
     }
     
     if let query = query {
@@ -187,8 +212,20 @@ class PostTextLabel: UILabel {
             NSAttributedString.Key.foregroundColor: UIColor(red:0.75, green:0.53, blue:0.16, alpha:1.0),
             NSAttributedString.Key.backgroundColor: UIColor(red:1.00, green:0.63, blue:0.00, alpha:0.12)
           ], range: range)
+          if range.upperBound > str.utf16.count {
+            print("Invalid range!")
+            print("Source: " + text)
+            print("Result: " + str)
+            print("[" + String(str.utf16.count) + "]")
+            print("Range:")
+            print(range)
+          }
         }
       }
+    }
+    
+    if query == nil {
+      PostTextLabel.parsedTexts[text] = result
     }
     attributedText = result
   }
