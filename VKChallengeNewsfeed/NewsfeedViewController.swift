@@ -118,6 +118,7 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
     DispatchQueue.main.async {
       if reset {
         ImageManager.instance.drop()
+        PostTextLabel.parsedTexts = [:]
       }
       self.feed = list
       
