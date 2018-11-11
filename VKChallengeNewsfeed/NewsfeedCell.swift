@@ -174,10 +174,10 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
             let frame = CGRect(x: x, y: 0, width: width - 40, height: height)
             if !stateOnly {
               let imageView = DownloadableImageView(frame: frame)
-              if abs(i - state.selectedPhoto) <= 1 {
-                imageView.downloadImageFrom(link: photo.minimumSize.url, contentMode: UIView.ContentMode.scaleAspectFill)
+              if abs(i - state.selectedPhoto) <= 1 { // First, load only closest photos, all other are not visible anyway
+                imageView.downloadImageFrom(link: photo.minimumSize.url, contentMode: .scaleAspectFill)
                 galleryPendingUrls.append(nil)
-              } else {
+              } else { // Store url to load later
                 galleryPendingUrls.append(photo.minimumSize.url)
               }
               imageView.clipsToBounds = true
@@ -221,8 +221,7 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
         let height = (width - 16) / aspect
         if !measureOnly {
           singleImageView.frame = CGRect(x: 8, y: y, width: width - 16, height: height)
-          singleImageView.downloadImageFrom(link: photo.minimumSize.url,
-                                            contentMode: UIView.ContentMode.scaleToFill)
+          singleImageView.downloadImageFrom(link: photo.minimumSize.url, contentMode: .scaleAspectFill)
         }
         
         y += height + 14
@@ -272,7 +271,7 @@ class NewsfeedCell: UITableViewCell, UIScrollViewDelegate {
     for offs in -1...1 {
       let page = galleryPageControl.currentPage + offs
       if page >= 0 && page < galleryPendingUrls.count && galleryPendingUrls[page] != nil {
-        galleryImageViews[page].downloadImageFrom(link: galleryPendingUrls[page]!, contentMode: .scaleToFill)
+        galleryImageViews[page].downloadImageFrom(link: galleryPendingUrls[page]!, contentMode: .scaleAspectFill)
         galleryPendingUrls[page] = nil
       }
     }

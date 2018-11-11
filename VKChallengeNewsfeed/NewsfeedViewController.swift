@@ -217,9 +217,12 @@ class NewsfeedViewController: UITableViewController, VKSdkDelegate, VKSdkUIDeleg
   
   func tappedLink(link: String) {
     if link.prefix(1) == "#" { // Hashtag: search for it
+      let hash = String(link.split(separator: "@")[0])
       searchTextField.text = link
-      tableView.setContentOffset(.zero, animated: true)
-      // TODO: call search
+      searchTextField.becomeFirstResponder()
+      //tableView.setContentOffset(.zero, animated: true)
+      
+      searchFor(text: hash)
     } else {
       guard let url = URL(string: link) else { return }
       UIApplication.shared.openURL(url)

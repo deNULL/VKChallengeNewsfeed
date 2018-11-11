@@ -10,8 +10,26 @@ import Foundation
 
 class API {
   static var token: String? = nil
+  static private let queue = DispatchQueue.main
+  static private var workItem: DispatchWorkItem? = nil
+  static let MIN_INTERVAL = 0.15
   
   static func call(method: String,
+                   params: [String: String],
+                   onCompletion: @escaping (_ response: Any?, _ error: Error?)->()) {
+    if workItem != nil {
+      workItem?.cancel()
+      workItem = DispatchWorkItem(block: {
+        API.directCall(method: method, params: params, onCompletion: onCompletion)
+      })
+      queue.asyncAfter(deadline: .now() + MIN_INTERVAL, execute: workItem!)
+      return
+    }
+    
+    directCall(method: method, params: params, onCompletion: onCompletion)
+  }
+  
+  static func directCall(method: String,
                    params: [String: String],
                    onCompletion: @escaping (_ response: Any?, _ error: Error?)->()) {
     if API.token == nil {
@@ -58,6 +76,11 @@ class API {
       }
     }
     task.resume()
+    
+    workItem = DispatchWorkItem(block: {
+      workItem = nil
+    })
+    queue.asyncAfter(deadline: .now() + MIN_INTERVAL, execute: workItem!)
   }
   
   static func execute(code: String, onCompletion: @escaping (_ result: Any?, _ error: Error?)->()) {
